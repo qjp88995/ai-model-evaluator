@@ -37,6 +37,7 @@ export class EvalService {
         type: "compare",
         modelIds: dto.modelIds,
         prompt: dto.prompt,
+        systemPrompt: dto.systemPrompt,
         status: "pending",
       },
     });
@@ -79,8 +80,10 @@ export class EvalService {
       });
 
       const messages: Message[] = [];
-      if (model.systemPrompt) {
-        messages.push({ role: "system", content: model.systemPrompt });
+      // session.systemPrompt（本次对比时传入）优先于模型默认 systemPrompt
+      const effectiveSystemPrompt = session.systemPrompt ?? model.systemPrompt;
+      if (effectiveSystemPrompt) {
+        messages.push({ role: "system", content: effectiveSystemPrompt });
       }
       messages.push({ role: "user", content: session.prompt });
 

@@ -56,6 +56,7 @@ model EvalSession {
   type         String       // 'compare' | 'batch'
   modelIds     String[]
   prompt       String?
+  systemPrompt String?
   testSetId    String?
   judgeModelId String?
   status       String       @default("pending") // pending|running|completed|failed
