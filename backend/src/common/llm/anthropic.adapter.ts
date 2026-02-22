@@ -79,7 +79,6 @@ export class AnthropicAdapter implements LlmAdapter {
           event.delta.type === "text_delta"
         ) {
           yield { content: event.delta.text, done: false };
-          await new Promise<void>((r) => setImmediate(r));
         } else if (event.type === "message_delta" && event.usage) {
           tokensOutput = event.usage.output_tokens;
         } else if (event.type === "message_start" && event.message.usage) {

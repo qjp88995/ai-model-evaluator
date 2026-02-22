@@ -66,8 +66,6 @@ export class OpenAIAdapter implements LlmAdapter {
         }
         if (delta) {
           yield { content: delta, done: false };
-          // 让出事件循环，确保多模型并发时其他流可以交替写入
-          await new Promise<void>((r) => setImmediate(r));
         }
       }
 

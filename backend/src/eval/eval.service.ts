@@ -80,7 +80,6 @@ export class EvalService {
       });
 
       const messages: Message[] = [];
-      // session.systemPrompt（本次对比时传入）优先于模型默认 systemPrompt
       const effectiveSystemPrompt = session.systemPrompt || model.systemPrompt;
       if (effectiveSystemPrompt) {
         messages.push({ role: "system", content: effectiveSystemPrompt });
@@ -88,48 +87,69 @@ export class EvalService {
       messages.push({ role: "user", content: session.prompt });
 
       const adapter = this.llmFactory.create(model);
+      const generator = adapter.stream(messages, {
+        temperature: model.temperature,
+        topP: model.topP,
+        maxTokens: model.maxTokens,
+        timeout: model.timeout,
+      });
       let fullResponse = "";
 
-      try {
-        for await (const chunk of adapter.stream(messages, {
-          temperature: model.temperature,
-          topP: model.topP,
-          maxTokens: model.maxTokens,
-          timeout: model.timeout,
-        })) {
-          if (chunk.done) {
-            await this.prisma.evalResult.update({
-              where: { id: resultRecord.id },
-              data: {
-                response: fullResponse,
-                tokensInput: chunk.tokensInput,
-                tokensOutput: chunk.tokensOutput,
-                responseTimeMs: chunk.responseTimeMs,
-                status: chunk.error ? "failed" : "success",
-                error: chunk.error,
-              },
+      // 手动驱动生成器：setImmediate 放在消费者侧、请求下一个 chunk 之前，
+      // 而非生成器内部。这样在 generator.next() 被调用前，事件循环已完整
+      // 执行一轮，其他模型的 I/O 回调有机会被调度，实现真正的并发输出。
+      await new Promise<void>((resolve) => {
+        const processNext = () => {
+          generator
+            .next()
+            .then(({ value: chunk }) => {
+              if (!chunk || chunk.done) {
+                this.prisma.evalResult
+                  .update({
+                    where: { id: resultRecord.id },
+                    data: {
+                      response: fullResponse,
+                      tokensInput: chunk?.tokensInput,
+                      tokensOutput: chunk?.tokensOutput,
+                      responseTimeMs: chunk?.responseTimeMs,
+                      status: chunk?.error ? "failed" : "success",
+                      error: chunk?.error,
+                    },
+                  })
+                  .then(() =>
+                    this.updateUsageStat(
+                      model.id,
+                      chunk?.tokensInput ?? 0,
+                      chunk?.tokensOutput ?? 0,
+                    ),
+                  )
+                  .then(() => {
+                    send({
+                      modelId: model.id,
+                      done: true,
+                      tokensInput: chunk?.tokensInput,
+                      tokensOutput: chunk?.tokensOutput,
+                      responseTimeMs: chunk?.responseTimeMs,
+                      error: chunk?.error,
+                    });
+                    resolve();
+                  })
+                  .catch(() => resolve());
+              } else {
+                fullResponse += chunk.content ?? "";
+                send({ modelId: model.id, chunk: chunk.content, done: false });
+                // 关键：在请求下一个 chunk 前先让出事件循环
+                setImmediate(processNext);
+              }
+            })
+            .catch((err: any) => {
+              send({ modelId: model.id, error: err.message, done: true });
+              resolve();
             });
-            await this.updateUsageStat(
-              model.id,
-              chunk.tokensInput ?? 0,
-              chunk.tokensOutput ?? 0,
-            );
-            send({
-              modelId: model.id,
-              done: true,
-              tokensInput: chunk.tokensInput,
-              tokensOutput: chunk.tokensOutput,
-              responseTimeMs: chunk.responseTimeMs,
-              error: chunk.error,
-            });
-          } else {
-            fullResponse += chunk.content ?? "";
-            send({ modelId: model.id, chunk: chunk.content, done: false });
-          }
-        }
-      } catch (err: any) {
-        send({ modelId: model.id, error: err.message, done: true });
-      }
+        };
+
+        processNext();
+      });
     };
 
     await Promise.allSettled(models.map((m) => streamModel(m)));
