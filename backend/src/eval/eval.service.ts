@@ -81,7 +81,7 @@ export class EvalService {
 
       const messages: Message[] = [];
       // session.systemPrompt（本次对比时传入）优先于模型默认 systemPrompt
-      const effectiveSystemPrompt = session.systemPrompt ?? model.systemPrompt;
+      const effectiveSystemPrompt = session.systemPrompt || model.systemPrompt;
       if (effectiveSystemPrompt) {
         messages.push({ role: "system", content: effectiveSystemPrompt });
       }
