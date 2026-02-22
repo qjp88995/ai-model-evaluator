@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LlmModel {
+  id           String   @id @default(uuid())
+  name         String
+  provider     String   // openai|anthropic|zhipu|moonshot|qianwen|custom
+  apiKey       String   // AES-256-GCM 加密存储
+  baseUrl      String?
+  modelId      String
+  temperature  Float    @default(0.7)
+  topP         Float    @default(1.0)
+  maxTokens    Int      @default(2048)
+  systemPrompt String?
+  timeout      Int      @default(30000)
+  retryCount   Int      @default(2)
+  isJudge      Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("llm_models")
+}
+
+model TestSet {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  testCases   TestCase[]
+
+  @@map("test_sets")
+}
+
+model TestCase {
+  id              String  @id @default(uuid())
+  testSetId       String
+  prompt          String
+  referenceAnswer String?
+  scoringCriteria String?
+  order           Int     @default(0)
+  testSet         TestSet @relation(fields: [testSetId], references: [id], onDelete: Cascade)
+
+  @@map("test_cases")
+}
+
+model EvalSession {
+  id           String       @id @default(uuid())
+  name         String?
+  type         String       // 'compare' | 'batch'
+  modelIds     String[]
+  prompt       String?
+  testSetId    String?
+  judgeModelId String?
+  status       String       @default("pending") // pending|running|completed|failed
+  createdAt    DateTime     @default(now())
+  completedAt  DateTime?
+  results      EvalResult[]
+
+  @@map("eval_sessions")
+}
+
+model EvalResult {
+  id             String      @id @default(uuid())
+  sessionId      String
+  modelId        String
+  testCaseId     String?
+  prompt         String
+  response       String?
+  tokensInput    Int?
+  tokensOutput   Int?
+  responseTimeMs Int?
+  score          Float?
+  scoreComment   String?
+  status         String      @default("pending") // pending|success|failed
+  error          String?
+  createdAt      DateTime    @default(now())
+  session        EvalSession @relation(fields: [sessionId], references: [id])
+
+  @@map("eval_results")
+}
+
+model UsageStat {
+  id           String   @id @default(uuid())
+  modelId      String
+  date         DateTime @db.Date
+  tokensInput  Int      @default(0)
+  tokensOutput Int      @default(0)
+  requestCount Int      @default(0)
+
+  @@unique([modelId, date])
+  @@map("usage_stats")
+}
