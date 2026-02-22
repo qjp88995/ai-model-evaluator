@@ -1,5 +1,11 @@
-import OpenAI from 'openai';
-import { ChatOptions, ChatResult, LlmAdapter, Message, StreamChunk } from './llm.types';
+import OpenAI from "openai";
+import {
+  ChatOptions,
+  ChatResult,
+  LlmAdapter,
+  Message,
+  StreamChunk,
+} from "./llm.types";
 
 export class OpenAIAdapter implements LlmAdapter {
   private client: OpenAI;
@@ -26,14 +32,17 @@ export class OpenAIAdapter implements LlmAdapter {
 
     const choice = response.choices[0];
     return {
-      content: choice.message.content ?? '',
+      content: choice.message.content ?? "",
       tokensInput: response.usage?.prompt_tokens ?? 0,
       tokensOutput: response.usage?.completion_tokens ?? 0,
       responseTimeMs: Date.now() - start,
     };
   }
 
-  async *stream(messages: Message[], options: ChatOptions): AsyncGenerator<StreamChunk> {
+  async *stream(
+    messages: Message[],
+    options: ChatOptions,
+  ): AsyncGenerator<StreamChunk> {
     const start = Date.now();
     let tokensInput = 0;
     let tokensOutput = 0;
@@ -57,6 +66,8 @@ export class OpenAIAdapter implements LlmAdapter {
         }
         if (delta) {
           yield { content: delta, done: false };
+          // 让出事件循环，确保多模型并发时其他流可以交替写入
+          await new Promise<void>((r) => setImmediate(r));
         }
       }
 
@@ -67,7 +78,7 @@ export class OpenAIAdapter implements LlmAdapter {
         responseTimeMs: Date.now() - start,
       };
     } catch (err: any) {
-      yield { done: true, error: err.message ?? 'Unknown error' };
+      yield { done: true, error: err.message ?? "Unknown error" };
     }
   }
 }
