@@ -25,8 +25,10 @@ export class OpenAIAdapter implements LlmAdapter {
     const response = await this.client.chat.completions.create({
       model: this.modelId,
       messages: messages as any,
-      temperature: options.temperature ?? 0.7,
-      top_p: options.topP ?? 1.0,
+      ...(options.temperature != null && {
+        temperature: options.temperature,
+      }),
+      ...(options.topP != null && { top_p: options.topP }),
       max_tokens: options.maxTokens ?? 2048,
     });
 
@@ -51,8 +53,10 @@ export class OpenAIAdapter implements LlmAdapter {
       const stream = await this.client.chat.completions.create({
         model: this.modelId,
         messages: messages as any,
-        temperature: options.temperature ?? 0.7,
-        top_p: options.topP ?? 1.0,
+        ...(options.temperature != null && {
+          temperature: options.temperature,
+        }),
+        ...(options.topP != null && { top_p: options.topP }),
         max_tokens: options.maxTokens ?? 2048,
         stream: true,
         stream_options: { include_usage: true },

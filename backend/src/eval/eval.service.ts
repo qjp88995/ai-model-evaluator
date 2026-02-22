@@ -295,16 +295,19 @@ export class EvalService {
           ),
         },
       ];
+      // 不传 temperature，让模型使用自身默认值（兼容推理类模型如 deepseek-reasoner）
       const result = await adapter.chat(messages, {
-        temperature: 0,
-        maxTokens: 256,
+        maxTokens: 512,
       });
       const jsonMatch = result.content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-    } catch {
-      // 评分失败不影响主流程
+      console.warn(
+        `[runJudge] 裁判模型未返回有效 JSON，原始内容: ${result.content.slice(0, 200)}`,
+      );
+    } catch (err: any) {
+      console.error(`[runJudge] 裁判模型调用失败: ${err.message}`);
     }
     return null;
   }
