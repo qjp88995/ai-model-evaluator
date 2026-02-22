@@ -1,19 +1,13 @@
 import { useState } from 'react';
-import { Layout, Menu, theme } from 'antd';
-import {
-  RobotOutlined,
-  SettingOutlined,
-  BarChartOutlined,
-  OrderedListOutlined,
-  HistoryOutlined,
-  ExperimentOutlined,
-} from '@ant-design/icons';
+import { Layout, Menu, theme, Button } from 'antd';
+import { LogoutOutlined, RobotOutlined, SettingOutlined, BarChartOutlined, OrderedListOutlined, HistoryOutlined, ExperimentOutlined } from '@ant-design/icons';
 import ModelsPage from './pages/models/ModelsPage';
 import ComparePage from './pages/compare/ComparePage';
 import BatchPage from './pages/batch/BatchPage';
 import TestSetsPage from './pages/testsets/TestSetsPage';
 import HistoryPage from './pages/history/HistoryPage';
 import StatsPage from './pages/stats/StatsPage';
+import LoginPage from './pages/auth/LoginPage';
 
 const { Header, Sider, Content } = Layout;
 
@@ -37,7 +31,17 @@ const pageMap: Record<string, React.ReactNode> = {
 
 export default function App() {
   const [current, setCurrent] = useState('models');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
   const { token } = theme.useToken();
+
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -73,11 +77,15 @@ export default function App() {
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <span style={{ fontSize: 16, fontWeight: 500 }}>
             {menuItems.find((m) => m.key === current)?.label}
           </span>
+          <Button icon={<LogoutOutlined />} type="text" onClick={handleLogout}>
+            退出登录
+          </Button>
         </Header>
         <Content style={{ margin: 24, minHeight: 280 }}>
           {pageMap[current]}

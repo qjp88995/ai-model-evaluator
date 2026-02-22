@@ -74,8 +74,9 @@ export default function ComparePage() {
       const total = selectedIds.length;
 
       selectedIds.forEach((modelId) => {
+        const token = localStorage.getItem("token") ?? "";
         const es = new EventSource(
-          `/api/eval/compare/${sessionId}/stream/${modelId}`,
+          `/api/eval/compare/${sessionId}/stream/${modelId}?token=${encodeURIComponent(token)}`,
         );
         eventSourcesRef.current.push(es);
 

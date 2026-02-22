@@ -5,6 +5,31 @@ const api = axios.create({
   timeout: 30000,
 });
 
+// Request 拦截器：自动附加 Bearer token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// Response 拦截器：401 时清除 token 并刷新页面
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.reload();
+    }
+    return Promise.reject(err);
+  },
+);
+
+// Auth
+export const authApi = {
+  login: (username: string, password: string) =>
+    api.post('/auth/login', { username, password }),
+};
+
 // Models
 export const modelsApi = {
   list: () => api.get('/models'),
