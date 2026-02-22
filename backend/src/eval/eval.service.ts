@@ -43,11 +43,13 @@ export class EvalService {
     });
   }
 
-  async streamCompare(sessionId: string, res: Response) {
-    const session = await this.prisma.evalSession.findUnique({
-      where: { id: sessionId },
-    });
+  async streamOneModel(sessionId: string, modelId: string, res: Response) {
+    const [session, model] = await Promise.all([
+      this.prisma.evalSession.findUnique({ where: { id: sessionId } }),
+      this.prisma.llmModel.findUnique({ where: { id: modelId } }),
+    ]);
     if (!session) throw new NotFoundException(`Session ${sessionId} not found`);
+    if (!model) throw new NotFoundException(`Model ${modelId} not found`);
 
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -56,108 +58,90 @@ export class EvalService {
 
     const send = (data: object) => {
       res.write(`data: ${JSON.stringify(data)}\n\n`);
-      // 强制立即将数据刷到客户端，避免缓冲区积压导致多模型输出串行
       (res as any).flush?.();
     };
 
+    // 首次连接时将 session 置为 running（幂等，多个模型并发连接均可）
     await this.prisma.evalSession.update({
       where: { id: sessionId },
       data: { status: "running" },
     });
 
-    const models = await this.prisma.llmModel.findMany({
-      where: { id: { in: session.modelIds } },
+    const resultRecord = await this.prisma.evalResult.create({
+      data: {
+        sessionId,
+        modelId: model.id,
+        prompt: session.prompt ?? "",
+        status: "pending",
+      },
     });
 
-    const streamModel = async (model: any) => {
-      const resultRecord = await this.prisma.evalResult.create({
-        data: {
-          sessionId,
-          modelId: model.id,
-          prompt: session.prompt,
-          status: "pending",
-        },
-      });
+    const messages: Message[] = [];
+    const effectiveSystemPrompt = session.systemPrompt || model.systemPrompt;
+    if (effectiveSystemPrompt) {
+      messages.push({ role: "system", content: effectiveSystemPrompt });
+    }
+    messages.push({ role: "user", content: session.prompt ?? "" });
 
-      const messages: Message[] = [];
-      const effectiveSystemPrompt = session.systemPrompt || model.systemPrompt;
-      if (effectiveSystemPrompt) {
-        messages.push({ role: "system", content: effectiveSystemPrompt });
-      }
-      messages.push({ role: "user", content: session.prompt });
+    const adapter = this.llmFactory.create(model);
+    let fullResponse = "";
 
-      const adapter = this.llmFactory.create(model);
-      const generator = adapter.stream(messages, {
+    try {
+      for await (const chunk of adapter.stream(messages, {
         temperature: model.temperature,
         topP: model.topP,
         maxTokens: model.maxTokens,
         timeout: model.timeout,
-      });
-      let fullResponse = "";
+      })) {
+        if (chunk.done) {
+          await this.prisma.evalResult.update({
+            where: { id: resultRecord.id },
+            data: {
+              response: fullResponse,
+              tokensInput: chunk.tokensInput,
+              tokensOutput: chunk.tokensOutput,
+              responseTimeMs: chunk.responseTimeMs,
+              status: chunk.error ? "failed" : "success",
+              error: chunk.error,
+            },
+          });
+          await this.updateUsageStat(
+            model.id,
+            chunk.tokensInput ?? 0,
+            chunk.tokensOutput ?? 0,
+          );
+          send({
+            done: true,
+            tokensInput: chunk.tokensInput,
+            tokensOutput: chunk.tokensOutput,
+            responseTimeMs: chunk.responseTimeMs,
+            error: chunk.error,
+          });
+        } else {
+          fullResponse += chunk.content ?? "";
+          send({ chunk: chunk.content, done: false });
+        }
+      }
+    } catch (err: any) {
+      await this.prisma.evalResult
+        .update({
+          where: { id: resultRecord.id },
+          data: { status: "failed", error: err.message },
+        })
+        .catch(() => {});
+      send({ error: err.message, done: true });
+    }
 
-      // 手动驱动生成器：setImmediate 放在消费者侧、请求下一个 chunk 之前，
-      // 而非生成器内部。这样在 generator.next() 被调用前，事件循环已完整
-      // 执行一轮，其他模型的 I/O 回调有机会被调度，实现真正的并发输出。
-      await new Promise<void>((resolve) => {
-        const processNext = () => {
-          generator
-            .next()
-            .then(({ value: chunk }) => {
-              if (!chunk || chunk.done) {
-                this.prisma.evalResult
-                  .update({
-                    where: { id: resultRecord.id },
-                    data: {
-                      response: fullResponse,
-                      tokensInput: chunk?.tokensInput,
-                      tokensOutput: chunk?.tokensOutput,
-                      responseTimeMs: chunk?.responseTimeMs,
-                      status: chunk?.error ? "failed" : "success",
-                      error: chunk?.error,
-                    },
-                  })
-                  .then(() =>
-                    this.updateUsageStat(
-                      model.id,
-                      chunk?.tokensInput ?? 0,
-                      chunk?.tokensOutput ?? 0,
-                    ),
-                  )
-                  .then(() => {
-                    send({
-                      modelId: model.id,
-                      done: true,
-                      tokensInput: chunk?.tokensInput,
-                      tokensOutput: chunk?.tokensOutput,
-                      responseTimeMs: chunk?.responseTimeMs,
-                      error: chunk?.error,
-                    });
-                    resolve();
-                  })
-                  .catch(() => resolve());
-              } else {
-                fullResponse += chunk.content ?? "";
-                send({ modelId: model.id, chunk: chunk.content, done: false });
-                // 关键：在请求下一个 chunk 前先让出事件循环
-                setImmediate(processNext);
-              }
-            })
-            .catch((err: any) => {
-              send({ modelId: model.id, error: err.message, done: true });
-              resolve();
-            });
-        };
-
-        processNext();
-      });
-    };
-
-    await Promise.allSettled(models.map((m) => streamModel(m)));
-
-    await this.prisma.evalSession.update({
-      where: { id: sessionId },
-      data: { status: "completed", completedAt: new Date() },
+    // 检查当前 session 下所有模型是否均已完成，若是则更新 session 状态
+    const finishedCount = await this.prisma.evalResult.count({
+      where: { sessionId, status: { in: ["success", "failed"] } },
     });
+    if (finishedCount >= session.modelIds.length) {
+      await this.prisma.evalSession.update({
+        where: { id: sessionId },
+        data: { status: "completed", completedAt: new Date() },
+      });
+    }
 
     res.end();
   }
