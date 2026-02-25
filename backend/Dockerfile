@@ -6,6 +6,7 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml* ./
 COPY prisma ./prisma
 RUN pnpm install --frozen-lockfile
+RUN pnpm exec prisma generate
 
 COPY . .
 RUN pnpm build
