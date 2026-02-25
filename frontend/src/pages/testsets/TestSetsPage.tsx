@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   DeleteOutlined,
@@ -23,7 +23,7 @@ import {
 } from "antd";
 
 import { testsetsApi } from "../../services/api";
-import { TestCase,TestSet } from "../../types";
+import { TestCase, TestSet } from "../../types";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -266,7 +266,7 @@ export default function TestSetsPage() {
         title={currentSet?.name}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        width={800}
+        size="large"
         extra={
           <Space>
             <Upload
