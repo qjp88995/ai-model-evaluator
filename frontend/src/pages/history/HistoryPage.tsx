@@ -161,8 +161,8 @@ export default function HistoryPage() {
   ];
 
   return (
-    <div className="glass-card" style={{ padding: "20px 24px" }}>
-      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
+    <div className="glass-card px-6 py-5">
+      <div className="mb-4 flex gap-2">
         <Select
           placeholder="筛选类型"
           allowClear
@@ -172,7 +172,7 @@ export default function HistoryPage() {
             { value: "compare", label: "实时对比" },
             { value: "batch", label: "批量测评" },
           ]}
-          style={{ width: 160 }}
+          className="w-40"
         />
         <Button onClick={load}>刷新</Button>
       </div>
@@ -203,7 +203,7 @@ export default function HistoryPage() {
               <div>
                 <div>
                   <strong>回答：</strong>
-                  <pre style={{ whiteSpace: "pre-wrap", margin: 0 }}>
+                  <pre className="whitespace-pre-wrap m-0">
                     {r.response}
                   </pre>
                 </div>
@@ -214,7 +214,7 @@ export default function HistoryPage() {
                   </div>
                 )}
                 {r.error && (
-                  <div style={{ color: "red" }}>
+                  <div className="text-red-500">
                     <strong>错误：</strong>
                     {r.error}
                   </div>

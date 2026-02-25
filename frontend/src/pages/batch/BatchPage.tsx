@@ -165,9 +165,9 @@ export default function BatchPage() {
   ];
 
   return (
-    <div className="glass-card" style={{ padding: "20px 24px" }}>
-      <div className="glass-card" style={{ padding: "20px 24px", marginBottom: 16 }}>
-        <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 16 }}>新建批量测评</div>
+    <div className="glass-card px-6 py-5">
+      <div className="glass-card px-6 py-5 mb-4">
+        <div className="font-semibold text-base mb-4">新建批量测评</div>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="任务名称">
             <Input placeholder="可选，留空自动生成" />
@@ -212,11 +212,7 @@ export default function BatchPage() {
               icon={<PlayCircleOutlined />}
               loading={loading}
               onClick={handleStart}
-              style={{
-                background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
-                border: "none",
-                boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
-              }}
+              className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
             >
               开始测评
             </Button>
@@ -224,9 +220,9 @@ export default function BatchPage() {
         </Form>
       </div>
 
-      <div className="glass-card" style={{ padding: "20px 24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <div style={{ fontWeight: 600, fontSize: 16 }}>测评历史</div>
+      <div className="glass-card px-6 py-5">
+        <div className="flex justify-between items-center mb-4">
+          <div className="font-semibold text-base">测评历史</div>
           <Button size="small" onClick={load}>
             刷新
           </Button>
@@ -266,7 +262,7 @@ export default function BatchPage() {
                   </div>
                 )}
                 {record.error && (
-                  <div style={{ color: "red" }}>
+                  <div className="text-red-500">
                     <strong>错误：</strong>
                     {record.error}
                   </div>

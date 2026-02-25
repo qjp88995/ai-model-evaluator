@@ -52,14 +52,7 @@ export default function StatsPage() {
   return (
     <>
       {/* 统计卡片行 */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: 16,
-          marginBottom: 20,
-        }}
-      >
+      <div className="grid grid-cols-6 gap-4 mb-5">
         {[
           { title: '总请求数', value: overview?.totalRequests ?? 0, color: '#a78bfa' },
           { title: '输入 Token', value: overview?.totalTokensInput ?? 0, color: '#60a5fa' },
@@ -68,11 +61,11 @@ export default function StatsPage() {
           { title: '活跃模型', value: overview?.activeModels ?? 0, color: '#f472b6' },
           { title: '评测会话', value: overview?.totalSessions ?? 0, color: '#a78bfa' },
         ].map((item) => (
-          <div key={item.title} className="glass-card" style={{ padding: '16px 20px' }}>
-            <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 8, letterSpacing: '0.05em' }}>
+          <div key={item.title} className="glass-card px-5 py-4">
+            <div className="text-xs text-slate-400 mb-2 tracking-[0.05em]">
               {item.title}
             </div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: item.color }}>
+            <div className="text-[22px] font-bold" style={{ color: item.color }}>
               {item.value.toLocaleString()}
             </div>
           </div>
@@ -80,9 +73,9 @@ export default function StatsPage() {
       </div>
 
       {/* Token 趋势图 */}
-      <div className="glass-card" style={{ padding: '20px 24px', marginBottom: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <span style={{ fontWeight: 600, color: '#e2e8f0' }}>Token 用量趋势</span>
+      <div className="glass-card px-6 py-5 mb-5">
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-semibold text-slate-200">Token 用量趋势</span>
           <Select
             value={days}
             onChange={setDays}
@@ -91,7 +84,7 @@ export default function StatsPage() {
               { value: 30, label: '近 30 天' },
               { value: 90, label: '近 90 天' },
             ]}
-            style={{ width: 120 }}
+            className="w-[120px]"
           />
         </div>
         <ResponsiveContainer width="100%" height={280}>
@@ -108,9 +101,9 @@ export default function StatsPage() {
       </div>
 
       {/* 底部两列 */}
-      <div style={{ display: 'grid', gridTemplateColumns: '14fr 10fr', gap: 16 }}>
-        <div className="glass-card" style={{ padding: '20px 24px' }}>
-          <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: 16 }}>各模型用量排行</div>
+      <div className="grid grid-cols-[14fr_10fr] gap-4">
+        <div className="glass-card px-6 py-5">
+          <div className="font-semibold text-slate-200 mb-4">各模型用量排行</div>
           <Table
             rowKey="modelId"
             size="small"
@@ -119,8 +112,8 @@ export default function StatsPage() {
             pagination={false}
           />
         </div>
-        <div className="glass-card" style={{ padding: '20px 24px' }}>
-          <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: 16 }}>模型请求数对比</div>
+        <div className="glass-card px-6 py-5">
+          <div className="font-semibold text-slate-200 mb-4">模型请求数对比</div>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={modelStats.slice(0, 8)} layout="vertical" margin={{ left: 80 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />

@@ -142,18 +142,15 @@ export default function ComparePage() {
 
   return (
     <div>
-      <div
-        className="glass-card"
-        style={{ padding: "20px 24px", marginBottom: 20 }}
-      >
-        <Space direction="vertical" style={{ width: "100%" }} size="middle">
+      <div className="glass-card px-6 py-5 mb-5">
+        <Space direction="vertical" className="w-full" size="middle">
           <Select
             mode="multiple"
             placeholder="选择对比模型（可多选）"
             options={modelOptions}
             value={selectedIds}
             onChange={setSelectedIds}
-            style={{ width: "100%" }}
+            className="w-full"
             maxTagCount={5}
           />
           <TextArea
@@ -161,16 +158,16 @@ export default function ComparePage() {
             value={systemPrompt}
             onChange={(e) => setSystemPrompt(e.target.value)}
             rows={2}
-            style={{ resize: "none" }}
+            className="resize-none"
           />
           <TextArea
             placeholder="输入 Prompt，所有模型同时响应..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             rows={4}
-            style={{ resize: "none" }}
+            className="resize-none"
           />
-          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <div className="flex gap-2 justify-end">
             <Button
               icon={<ClearOutlined />}
               onClick={handleClear}
@@ -200,21 +197,11 @@ export default function ComparePage() {
               sm={24}
               md={modelStates.length === 1 ? 24 : 12}
             >
-              <div
-                className="glass-card"
-                style={{ padding: "16px 20px", minHeight: 240 }}
-              >
+              <div className="glass-card px-5 py-4 min-h-[240px]">
                 {/* 标题行 */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 12,
-                  }}
-                >
+                <div className="flex justify-between items-center mb-3">
                   <Space>
-                    <span style={{ fontWeight: 600, color: "#e2e8f0" }}>
+                    <span className="font-semibold text-slate-200">
                       {state.name}
                     </span>
                     {state.done ? (
@@ -229,10 +216,10 @@ export default function ComparePage() {
                   </Space>
                   {state.done && !state.error && (
                     <Space size={4}>
-                      <Text type="secondary" style={{ fontSize: 12 }}>
+                      <Text type="secondary" className="text-xs">
                         {state.responseTimeMs}ms
                       </Text>
-                      <Text type="secondary" style={{ fontSize: 12 }}>
+                      <Text type="secondary" className="text-xs">
                         ↑{state.tokensInput} ↓{state.tokensOutput}
                       </Text>
                     </Space>
@@ -242,16 +229,7 @@ export default function ComparePage() {
                 {state.error ? (
                   <Text type="danger">{state.error}</Text>
                 ) : (
-                  <pre
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                      margin: 0,
-                      fontFamily: "inherit",
-                      fontSize: 14,
-                      color: "#e2e8f0",
-                    }}
-                  >
+                  <pre className="whitespace-pre-wrap break-words m-0 font-[inherit] text-sm text-slate-200">
                     {state.content}
                     {!state.done && <span className="cursor">▊</span>}
                   </pre>

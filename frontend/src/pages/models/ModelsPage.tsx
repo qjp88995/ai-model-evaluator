@@ -211,27 +211,16 @@ export default function ModelsPage() {
   ];
 
   return (
-    <div className="glass-card" style={{ padding: "20px 24px" }}>
-      <div
-        style={{
-          marginBottom: 16,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span style={{ color: "#94a3b8", fontSize: 13 }}>
+    <div className="glass-card px-6 py-5">
+      <div className="mb-4 flex justify-between items-center">
+        <span className="text-slate-400 text-[13px]">
           共 {models.length} 个模型
         </span>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={openCreate}
-          style={{
-            background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
-          }}
+          className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
         >
           添加模型
         </Button>
@@ -253,7 +242,7 @@ export default function ModelsPage() {
         width={640}
         destroyOnClose
       >
-        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={form} layout="vertical" className="mt-4">
           <Form.Item name="name" label="显示名称" rules={[{ required: true }]}>
             <Input placeholder="例: GPT-4o" />
           </Form.Item>
@@ -293,19 +282,13 @@ export default function ModelsPage() {
             <Input placeholder="gpt-4o / claude-3-5-sonnet-20241022" />
           </Form.Item>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: 16,
-            }}
-          >
+          <div className="grid grid-cols-3 gap-4">
             <Form.Item name="temperature" label="Temperature">
               <InputNumber
                 min={0}
                 max={2}
                 step={0.1}
-                style={{ width: "100%" }}
+                className="w-full"
               />
             </Form.Item>
             <Form.Item name="topP" label="Top P">
@@ -313,11 +296,11 @@ export default function ModelsPage() {
                 min={0}
                 max={1}
                 step={0.1}
-                style={{ width: "100%" }}
+                className="w-full"
               />
             </Form.Item>
             <Form.Item name="maxTokens" label="Max Tokens">
-              <InputNumber min={1} max={128000} style={{ width: "100%" }} />
+              <InputNumber min={1} max={128000} className="w-full" />
             </Form.Item>
           </div>
 
@@ -325,22 +308,16 @@ export default function ModelsPage() {
             <Input.TextArea rows={3} placeholder="可选" />
           </Form.Item>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: 16,
-            }}
-          >
+          <div className="grid grid-cols-3 gap-4">
             <Form.Item name="timeout" label="超时(ms)">
-              <InputNumber min={1000} style={{ width: "100%" }} />
+              <InputNumber min={1000} className="w-full" />
             </Form.Item>
             <Form.Item name="retryCount" label="重试次数">
-              <InputNumber min={0} max={5} style={{ width: "100%" }} />
+              <InputNumber min={0} max={5} className="w-full" />
             </Form.Item>
           </div>
 
-          <div style={{ display: "flex", gap: 32 }}>
+          <div className="flex gap-8">
             <Form.Item
               name="isJudge"
               label="可作为裁判模型"

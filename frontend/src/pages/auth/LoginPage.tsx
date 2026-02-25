@@ -24,71 +24,24 @@ export default function LoginPage({ onLogin }: Props) {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* 背景光晕装饰 */}
-      <div
-        style={{
-          position: 'absolute',
-          width: 600,
-          height: 600,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%)',
-          top: '-100px',
-          left: '-100px',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          width: 400,
-          height: 400,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, transparent 70%)',
-          bottom: '-50px',
-          right: '10%',
-          pointerEvents: 'none',
-        }}
-      />
+      <div className="absolute w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.15)_0%,transparent_70%)] -top-[100px] -left-[100px] pointer-events-none" />
+      <div className="absolute w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.12)_0%,transparent_70%)] -bottom-[50px] right-[10%] pointer-events-none" />
 
       {/* 登录卡片 */}
-      <div
-        className="glass-card"
-        style={{ width: 380, padding: '40px 36px' }}
-      >
+      <div className="glass-card w-[380px] px-9 py-10">
         {/* 图标 + 标题 */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              boxShadow: '0 0 30px rgba(124, 58, 237, 0.4)',
-            }}
-          >
-            <ThunderboltOutlined style={{ fontSize: 24, color: '#fff' }} />
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
+            <ThunderboltOutlined className="text-2xl text-white" />
           </div>
           <h1
-            className="gradient-text"
-            style={{ fontSize: 22, fontWeight: 700, margin: 0, lineHeight: 1.3 }}
+            className="gradient-text text-[22px] font-bold m-0 leading-[1.3]"
           >
             大模型评测平台
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: 13, margin: '6px 0 0' }}>
+          <p className="text-slate-400 text-[13px] m-0 mt-[6px]">
             AI Model Evaluation System
           </p>
         </div>
@@ -97,43 +50,28 @@ export default function LoginPage({ onLogin }: Props) {
         <Form onFinish={handleSubmit} autoComplete="off">
           <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input
-              prefix={<UserOutlined style={{ color: '#94a3b8' }} />}
+              prefix={<UserOutlined className="text-slate-400" />}
               placeholder="用户名"
               size="large"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(139, 92, 246, 0.25)',
-                borderRadius: 8,
-              }}
+              className="!bg-[rgba(255,255,255,0.06)] ![border:1px_solid_rgba(139,92,246,0.25)] !rounded-lg"
             />
           </Form.Item>
           <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
             <Input.Password
-              prefix={<LockOutlined style={{ color: '#94a3b8' }} />}
+              prefix={<LockOutlined className="text-slate-400" />}
               placeholder="密码"
               size="large"
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(139, 92, 246, 0.25)',
-                borderRadius: 8,
-              }}
+              className="!bg-[rgba(255,255,255,0.06)] ![border:1px_solid_rgba(139,92,246,0.25)] !rounded-lg"
             />
           </Form.Item>
-          <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+          <Form.Item className="mb-0 mt-2">
             <Button
               type="primary"
               htmlType="submit"
               loading={loading}
               block
               size="large"
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-                border: 'none',
-                borderRadius: 8,
-                fontWeight: 600,
-                height: 44,
-                boxShadow: '0 4px 20px rgba(124, 58, 237, 0.4)',
-              }}
+              className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none !rounded-lg !font-semibold !h-11 shadow-[0_4px_20px_rgba(124,58,237,0.4)]"
             >
               登录
             </Button>

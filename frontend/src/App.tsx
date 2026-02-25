@@ -55,37 +55,15 @@ export default function App() {
   const currentLabel = menuItems.find((m) => m.key === current)?.label;
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "transparent" }}>
+    <Layout className="min-h-screen !bg-transparent">
       {/* 侧边栏 */}
       <Sider
         width={220}
-        style={{
-          background: "rgba(15, 10, 40, 0.7)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderRight: "1px solid rgba(139, 92, 246, 0.15)",
-          position: "fixed",
-          height: "100vh",
-          zIndex: 100,
-          display: "flex",
-          flexDirection: "column",
-        }}
+        className="!bg-[rgba(15,10,40,0.7)] backdrop-blur-[20px] [border-right:1px_solid_rgba(139,92,246,0.15)] fixed h-screen z-[100] flex flex-col"
       >
         {/* Logo 区 */}
-        <div
-          style={{
-            height: 64,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderBottom: "1px solid rgba(139, 92, 246, 0.15)",
-            flexShrink: 0,
-          }}
-        >
-          <span
-            className="gradient-text"
-            style={{ fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}
-          >
+        <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_rgba(139,92,246,0.15)] shrink-0">
+          <span className="gradient-text text-base font-bold tracking-[0.05em]">
             ⚡ 大模型评测
           </span>
         </div>
@@ -97,28 +75,18 @@ export default function App() {
           selectedKeys={[current]}
           items={menuItems}
           onClick={({ key }) => setCurrent(key)}
-          style={{
-            background: "transparent",
-            border: "none",
-            flex: 1,
-            marginTop: 8,
-          }}
+          className="!bg-transparent !border-none flex-1 mt-2"
         />
 
         {/* 底部退出按钮 */}
-        <div
-          style={{
-            padding: "16px",
-            borderTop: "1px solid rgba(139, 92, 246, 0.15)",
-          }}
-        >
+        <div className="p-4 [border-top:1px_solid_rgba(139,92,246,0.15)]">
           <Tooltip title="退出登录" placement="right">
             <Button
               icon={<LogoutOutlined />}
               type="text"
               block
               onClick={handleLogout}
-              style={{ color: "#94a3b8", textAlign: "left" }}
+              className="!text-slate-400 text-left"
             >
               退出登录
             </Button>
@@ -127,55 +95,17 @@ export default function App() {
       </Sider>
 
       {/* 主内容区 */}
-      <Layout
-        style={{
-          marginLeft: 220,
-          background: "transparent",
-          minHeight: "100vh",
-        }}
-      >
+      <Layout className="ml-[220px] !bg-transparent min-h-screen">
         {/* 顶部标题栏 */}
-        <div
-          style={{
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            padding: "0 24px",
-            background: "rgba(15, 10, 40, 0.5)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(139, 92, 246, 0.1)",
-            position: "sticky",
-            top: 0,
-            zIndex: 99,
-          }}
-        >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              fontSize: 15,
-              fontWeight: 600,
-              color: "#e2e8f0",
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
-                boxShadow: "0 0 8px rgba(124, 58, 237, 0.8)",
-                display: "inline-block",
-              }}
-            />
+        <div className="h-14 flex items-center px-6 bg-[rgba(15,10,40,0.5)] backdrop-blur-[12px] [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
+          <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
             {currentLabel}
           </span>
         </div>
 
         {/* 页面内容 */}
-        <Content style={{ padding: 24, minHeight: "calc(100vh - 56px)" }}>
+        <Content className="p-6 min-h-[calc(100vh-56px)]">
           {pageMap[current]}
         </Content>
       </Layout>

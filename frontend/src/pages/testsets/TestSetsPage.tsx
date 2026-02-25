@@ -171,8 +171,8 @@ export default function TestSetsPage() {
   ];
 
   return (
-    <div className="glass-card" style={{ padding: '20px 24px' }}>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
+    <div className="glass-card px-6 py-5">
+      <div className="mb-4 flex justify-end">
         <Button
           type="primary" icon={<PlusOutlined />}
           onClick={() => {
@@ -180,11 +180,7 @@ export default function TestSetsPage() {
             setForm.resetFields();
             setSetModalOpen(true);
           }}
-          style={{
-            background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-            border: 'none',
-            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
-          }}
+          className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
         >
           新建测评集
         </Button>
@@ -199,7 +195,7 @@ export default function TestSetsPage() {
         onCancel={() => setSetModalOpen(false)}
         destroyOnClose
       >
-        <Form form={setForm} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={setForm} layout="vertical" className="mt-4">
           <Form.Item name="name" label="名称" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -226,18 +222,14 @@ export default function TestSetsPage() {
                 caseForm.resetFields();
                 setCaseModalOpen(true);
               }}
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
-              }}
+              className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
             >
               添加用例
             </Button>
           </Space>
         }
       >
-        <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
+        <Text type="secondary" className="block mb-2">
           CSV 格式：prompt,referenceAnswer,scoringCriteria（第一行为表头）
         </Text>
         <Table
@@ -256,7 +248,7 @@ export default function TestSetsPage() {
         onCancel={() => setCaseModalOpen(false)}
         destroyOnClose
       >
-        <Form form={caseForm} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={caseForm} layout="vertical" className="mt-4">
           <Form.Item name="prompt" label="Prompt" rules={[{ required: true }]}>
             <TextArea rows={4} />
           </Form.Item>
