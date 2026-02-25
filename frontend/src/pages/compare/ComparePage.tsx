@@ -1,6 +1,6 @@
-import { useEffect, useRef,useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { ClearOutlined,SendOutlined } from "@ant-design/icons";
+import { ClearOutlined, SendOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -14,7 +14,7 @@ import {
   Typography,
 } from "antd";
 
-import { evalApi,modelsApi } from "../../services/api";
+import { evalApi, modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
 
 const { TextArea } = Input;
@@ -145,7 +145,7 @@ export default function ComparePage() {
   return (
     <div>
       <div className="glass-card px-6 py-5 mb-5">
-        <Space direction="vertical" className="w-full" size="middle">
+        <Space orientation="vertical" className="w-full" size="middle">
           <Select
             mode="multiple"
             placeholder="选择对比模型（可多选）"
