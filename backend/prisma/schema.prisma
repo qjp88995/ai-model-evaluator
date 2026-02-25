@@ -10,7 +10,7 @@ datasource db {
 model LlmModel {
   id           String   @id @default(uuid())
   name         String
-  provider     String   // openai|anthropic|zhipu|moonshot|qianwen|custom
+  provider     String   // openai|anthropic|zhipu|moonshot|qianwen|deepseek|google|minimax|custom
   apiKey       String   // AES-256-GCM 加密存储
   baseUrl      String?
   modelId      String
