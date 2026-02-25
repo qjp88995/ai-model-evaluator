@@ -3,7 +3,6 @@ import {
   Button,
   Select,
   Input,
-  Card,
   Row,
   Col,
   Space,
@@ -143,7 +142,10 @@ export default function ComparePage() {
 
   return (
     <div>
-      <Card style={{ marginBottom: 16 }}>
+      <div
+        className="glass-card"
+        style={{ padding: "20px 24px", marginBottom: 20 }}
+      >
         <Space direction="vertical" style={{ width: "100%" }} size="middle">
           <Select
             mode="multiple"
@@ -187,7 +189,7 @@ export default function ComparePage() {
             </Button>
           </div>
         </Space>
-      </Card>
+      </div>
 
       {modelStates.length > 0 && (
         <Row gutter={[16, 16]}>
@@ -198,10 +200,23 @@ export default function ComparePage() {
               sm={24}
               md={modelStates.length === 1 ? 24 : 12}
             >
-              <Card
-                title={
+              <div
+                className="glass-card"
+                style={{ padding: "16px 20px", minHeight: 240 }}
+              >
+                {/* 标题行 */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 12,
+                  }}
+                >
                   <Space>
-                    <span>{state.name}</span>
+                    <span style={{ fontWeight: 600, color: "#e2e8f0" }}>
+                      {state.name}
+                    </span>
                     {state.done ? (
                       state.error ? (
                         <Tag color="red">失败</Tag>
@@ -212,10 +227,7 @@ export default function ComparePage() {
                       <Spin size="small" />
                     )}
                   </Space>
-                }
-                extra={
-                  state.done &&
-                  !state.error && (
+                  {state.done && !state.error && (
                     <Space size={4}>
                       <Text type="secondary" style={{ fontSize: 12 }}>
                         {state.responseTimeMs}ms
@@ -224,10 +236,9 @@ export default function ComparePage() {
                         ↑{state.tokensInput} ↓{state.tokensOutput}
                       </Text>
                     </Space>
-                  )
-                }
-                bodyStyle={{ minHeight: 200 }}
-              >
+                  )}
+                </div>
+                {/* 内容区 */}
                 {state.error ? (
                   <Text type="danger">{state.error}</Text>
                 ) : (
@@ -238,13 +249,14 @@ export default function ComparePage() {
                       margin: 0,
                       fontFamily: "inherit",
                       fontSize: 14,
+                      color: "#e2e8f0",
                     }}
                   >
                     {state.content}
                     {!state.done && <span className="cursor">▊</span>}
                   </pre>
                 )}
-              </Card>
+              </div>
             </Col>
           ))}
         </Row>
