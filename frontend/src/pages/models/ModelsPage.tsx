@@ -240,7 +240,7 @@ export default function ModelsPage() {
         onOk={handleSave}
         onCancel={() => setModalOpen(false)}
         width={640}
-        destroyOnClose
+        destroyOnHidden
         styles={{ body: { maxHeight: "65vh", overflowY: "auto" } }}
       >
         <Form form={form} layout="vertical" className="mt-4">
