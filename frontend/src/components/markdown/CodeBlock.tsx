@@ -9,7 +9,10 @@ function extractText(node: React.ReactNode): string {
   if (typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(extractText).join("");
   if (node !== null && typeof node === "object" && "props" in node) {
-    return extractText((node as React.ReactElement<{ children?: React.ReactNode }>).props.children);
+    return extractText(
+      (node as React.ReactElement<{ children?: React.ReactNode }>).props
+        .children,
+    );
   }
   return "";
 }
@@ -20,16 +23,25 @@ interface CodeBlockProps {
   children: React.ReactNode;
 }
 
-export default function CodeBlock({ language, className, children }: CodeBlockProps) {
+export default function CodeBlock({
+  language,
+  className,
+  children,
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     const text = extractText(children);
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      void message.success("已复制");
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        void message.success("已复制");
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        void message.error("复制失败，请手动复制");
+      });
   };
 
   return (
