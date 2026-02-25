@@ -34,7 +34,7 @@ export default function LoginPage({ onLogin }: Props) {
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* 背景光晕装饰 */}
       <div className="absolute w-150 h-150 rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.15)_0%,transparent_70%)] -top-25 -left-25 pointer-events-none" />
-      <div className="absolute w-100 h-100 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.12)_0%,transparent_70%)] -bottom-[50px] right-[10%] pointer-events-none" />
+      <div className="absolute w-100 h-100 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.12)_0%,transparent_70%)] -bottom-12.5 right-[10%] pointer-events-none" />
 
       {/* 登录卡片 */}
       <div className="glass-card w-95 px-9 py-10">
