@@ -211,15 +211,28 @@ export default function ModelsPage() {
   ];
 
   return (
-    <>
+    <div className="glass-card" style={{ padding: "20px 24px" }}>
       <div
         style={{
           marginBottom: 16,
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+        <span style={{ color: "#94a3b8", fontSize: 13 }}>
+          共 {models.length} 个模型
+        </span>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={openCreate}
+          style={{
+            background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
+            border: "none",
+            boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
+          }}
+        >
           添加模型
         </Button>
       </div>
@@ -341,6 +354,6 @@ export default function ModelsPage() {
           </div>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }
