@@ -229,7 +229,7 @@ export default function ComparePage() {
                 {state.error ? (
                   <Text type="danger">{state.error}</Text>
                 ) : (
-                  <pre className="whitespace-pre-wrap break-words m-0 font-[inherit] text-sm text-slate-200">
+                  <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
                     {state.content}
                     {!state.done && <span className="cursor">▊</span>}
                   </pre>
