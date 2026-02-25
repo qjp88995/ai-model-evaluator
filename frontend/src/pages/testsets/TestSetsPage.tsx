@@ -248,7 +248,7 @@ export default function TestSetsPage() {
         open={setModalOpen}
         onOk={handleSaveSet}
         onCancel={() => setSetModalOpen(false)}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={setForm} layout="vertical" className="mt-4">
           <Form.Item name="name" label="名称" rules={[{ required: true }]}>
@@ -306,7 +306,7 @@ export default function TestSetsPage() {
         open={caseModalOpen}
         onOk={handleSaveCase}
         onCancel={() => setCaseModalOpen(false)}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={caseForm} layout="vertical" className="mt-4">
           <Form.Item name="prompt" label="Prompt" rules={[{ required: true }]}>
