@@ -20,11 +20,14 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
 
   const results = session?.results ?? [];
 
-  const promptGroups = results.reduce<Record<string, EvalResult[]>>((acc, r) => {
-    if (!acc[r.prompt]) acc[r.prompt] = [];
-    acc[r.prompt].push(r);
-    return acc;
-  }, {});
+  const promptGroups = results.reduce<Record<string, EvalResult[]>>(
+    (acc, r) => {
+      if (!acc[r.prompt]) acc[r.prompt] = [];
+      acc[r.prompt].push(r);
+      return acc;
+    },
+    {},
+  );
   const prompts = Object.keys(promptGroups);
   const selectedPrompt = prompts[selectedIndex] ?? "";
   const selectedResults = promptGroups[selectedPrompt] ?? [];
@@ -41,7 +44,11 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
 
   return (
     <Drawer
-      title={session ? (session.name || session.id.slice(0, 8)) + " — 结果详情" : "结果详情"}
+      title={
+        session
+          ? (session.name || session.id.slice(0, 8)) + " — 结果详情"
+          : "结果详情"
+      }
       open={!!session}
       onClose={onClose}
       size="large"
@@ -59,11 +66,14 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
         <div className="flex flex-wrap gap-x-4 gap-y-1 px-5 py-3 border-b border-gray-200 text-sm shrink-0">
           {Object.entries(scoreMap).map(([modelId, scores]) => {
             const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-            const name = models.find((m) => m.id === modelId)?.name ?? modelId.slice(0, 8);
+            const name =
+              models.find((m) => m.id === modelId)?.name ?? modelId.slice(0, 8);
             return (
               <span key={modelId}>
                 {name}:{" "}
-                <span className="font-semibold text-primary">{avg.toFixed(1)} 分</span>
+                <span className="font-semibold text-primary">
+                  {avg.toFixed(1)} 分
+                </span>
               </span>
             );
           })}
@@ -76,7 +86,7 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
         <div className="w-48 shrink-0 border-r border-gray-200 overflow-y-auto">
           {prompts.map((prompt, idx) => (
             <div
-              key={idx}
+              key={prompt}
               onClick={() => setSelectedIndex(idx)}
               className={`px-3 py-2 text-xs cursor-pointer leading-relaxed border-b border-gray-100 hover:bg-gray-50 ${
                 idx === selectedIndex
@@ -99,9 +109,12 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
           {modelIds.length > 0 ? (
             <div className="flex divide-x divide-gray-200 min-h-full">
               {modelIds.map((modelId) => {
-                const result = selectedResults.find((r) => r.modelId === modelId);
+                const result = selectedResults.find(
+                  (r) => r.modelId === modelId,
+                );
                 const modelName =
-                  models.find((m) => m.id === modelId)?.name ?? modelId.slice(0, 8);
+                  models.find((m) => m.id === modelId)?.name ??
+                  modelId.slice(0, 8);
                 return (
                   <div key={modelId} className="flex-1 px-4 py-4 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
@@ -109,7 +122,9 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
                       {result?.score != null && (
                         <Tag color="blue">{result.score.toFixed(1)} 分</Tag>
                       )}
-                      {result?.status === "failed" && <Tag color="error">失败</Tag>}
+                      {result?.status === "failed" && (
+                        <Tag color="error">失败</Tag>
+                      )}
                     </div>
                     {result?.error ? (
                       <div className="text-red-500 text-sm">{result.error}</div>
