@@ -1,25 +1,27 @@
-import { useState, useEffect } from "react";
+import { useEffect,useState } from "react";
+
 import {
-  Table,
+  ApiOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import {
   Button,
-  Modal,
   Form,
   Input,
   InputNumber,
-  Select,
-  Switch,
-  Space,
-  Tag,
-  Popconfirm,
   message,
+  Modal,
+  Popconfirm,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Tag,
   Tooltip,
 } from "antd";
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  ApiOutlined,
-} from "@ant-design/icons";
+
 import { modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
 

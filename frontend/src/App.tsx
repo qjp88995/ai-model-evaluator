@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Menu, Button, Tooltip } from "antd";
+
 import {
+  BarChartOutlined,
+  ExperimentOutlined,
+  HistoryOutlined,
   LogoutOutlined,
+  OrderedListOutlined,
   RobotOutlined,
   SettingOutlined,
-  BarChartOutlined,
-  OrderedListOutlined,
-  HistoryOutlined,
-  ExperimentOutlined,
 } from "@ant-design/icons";
-import ModelsPage from "./pages/models/ModelsPage";
-import ComparePage from "./pages/compare/ComparePage";
-import BatchPage from "./pages/batch/BatchPage";
-import TestSetsPage from "./pages/testsets/TestSetsPage";
-import HistoryPage from "./pages/history/HistoryPage";
-import StatsPage from "./pages/stats/StatsPage";
+import { Button, Menu, Tooltip } from "antd";
+
 import LoginPage from "./pages/auth/LoginPage";
+import BatchPage from "./pages/batch/BatchPage";
+import ComparePage from "./pages/compare/ComparePage";
+import HistoryPage from "./pages/history/HistoryPage";
+import ModelsPage from "./pages/models/ModelsPage";
+import StatsPage from "./pages/stats/StatsPage";
+import TestSetsPage from "./pages/testsets/TestSetsPage";
 
 const menuItems = [
   { key: "models", icon: <SettingOutlined />, label: "模型管理" },

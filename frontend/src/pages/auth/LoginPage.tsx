@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Form, Input, Button, message } from "antd";
+
 import {
-  UserOutlined,
   LockOutlined,
   ThunderboltOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+import { Button, Form, Input, message } from "antd";
+
 import { authApi } from "../../services/api";
 
 interface Props {

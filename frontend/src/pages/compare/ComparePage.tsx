@@ -1,18 +1,20 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef,useState } from "react";
+
+import { ClearOutlined,SendOutlined } from "@ant-design/icons";
 import {
   Button,
-  Select,
-  Input,
-  Row,
   Col,
+  Input,
+  message,
+  Row,
+  Select,
   Space,
+  Spin,
   Tag,
   Typography,
-  message,
-  Spin,
 } from "antd";
-import { SendOutlined, ClearOutlined } from "@ant-design/icons";
-import { modelsApi, evalApi } from "../../services/api";
+
+import { evalApi,modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
 
 const { TextArea } = Input;

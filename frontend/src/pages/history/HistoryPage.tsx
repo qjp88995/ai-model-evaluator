@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
-import { Table, Tag, Button, Space, Modal, Select, message } from "antd";
-import { evalApi, modelsApi } from "../../services/api";
-import { EvalSession, EvalResult, LlmModel } from "../../types";
+import { useEffect, useState } from "react";
+
+import { Button, Modal, Select, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
+
+import { evalApi, modelsApi } from "../../services/api";
+import { EvalResult, EvalSession, LlmModel } from "../../types";
 
 const statusColor: Record<string, string> = {
   pending: "default",
@@ -203,9 +205,7 @@ export default function HistoryPage() {
               <div>
                 <div>
                   <strong>回答：</strong>
-                  <pre className="whitespace-pre-wrap m-0">
-                    {r.response}
-                  </pre>
+                  <pre className="whitespace-pre-wrap m-0">{r.response}</pre>
                 </div>
                 {r.scoreComment && (
                   <div>

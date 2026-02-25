@@ -1,19 +1,21 @@
-import { useState, useEffect } from "react";
+import { useEffect,useState } from "react";
+
+import { PlayCircleOutlined } from "@ant-design/icons";
 import {
-  Select,
   Button,
   Form,
   Input,
   message,
+  Modal,
+  Select,
+  Space,
   Table,
   Tag,
-  Space,
-  Modal,
 } from "antd";
-import { PlayCircleOutlined } from "@ant-design/icons";
-import { modelsApi, testsetsApi, evalApi } from "../../services/api";
-import { LlmModel, TestSet, EvalSession, EvalResult } from "../../types";
 import dayjs from "dayjs";
+
+import { evalApi,modelsApi, testsetsApi } from "../../services/api";
+import { EvalResult,EvalSession, LlmModel, TestSet } from "../../types";
 
 export default function BatchPage() {
   const [models, setModels] = useState<LlmModel[]>([]);

@@ -1,17 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect,useState } from "react";
+
 import { Select, Table, Tag } from "antd";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  BarChart,
-  Bar,
-  ResponsiveContainer,
 } from "recharts";
+
 import { statsApi } from "../../services/api";
 import { StatsOverview } from "../../types";
 
