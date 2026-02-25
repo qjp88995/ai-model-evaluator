@@ -63,7 +63,7 @@ export default function LoginPage({ onLogin }: Props) {
               prefix={<UserOutlined className="text-slate-400" />}
               placeholder="用户名"
               size="large"
-              className="bg-[rgba(255,255,255,0.06)] [border:1px_solid_rgba(139,92,246,0.25)] rounded-lg"
+              className="bg-white/6 border border-violet-500/25 rounded-lg"
             />
           </Form.Item>
           <Form.Item
@@ -74,7 +74,7 @@ export default function LoginPage({ onLogin }: Props) {
               prefix={<LockOutlined className="text-slate-400" />}
               placeholder="密码"
               size="large"
-              className="bg-[rgba(255,255,255,0.06)] [border:1px_solid_rgba(139,92,246,0.25)] rounded-lg"
+              className="bg-white/6 border border-violet-500/25 rounded-lg"
             />
           </Form.Item>
           <Form.Item className="mb-0 mt-2">

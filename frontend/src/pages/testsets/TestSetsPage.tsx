@@ -232,7 +232,7 @@ export default function TestSetsPage() {
             setForm.resetFields();
             setSetModalOpen(true);
           }}
-          className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+          className="bg-(--gradient-primary) border-none shadow-(--shadow-btn)"
         >
           新建测评集
         </Button>
@@ -284,7 +284,7 @@ export default function TestSetsPage() {
                 caseForm.resetFields();
                 setCaseModalOpen(true);
               }}
-              className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+              className="bg-(--gradient-primary) border-none shadow-(--shadow-btn)"
             >
               添加用例
             </Button>
