@@ -24,6 +24,7 @@ import {
 
 import { evalApi, modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
+import { MarkdownRenderer } from "../../components/markdown";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -269,9 +270,7 @@ export default function ComparePage() {
       {modelStates.length === 0 && (
         <div className="glass-card flex flex-col items-center justify-center py-20 text-slate-500 select-none">
           <SendOutlined className="text-4xl mb-4 opacity-20" />
-          <p className="text-sm m-0">
-            选择模型，输入 Prompt，点击「开始对比」
-          </p>
+          <p className="text-sm m-0">选择模型，输入 Prompt，点击「开始对比」</p>
         </div>
       )}
 
@@ -340,10 +339,10 @@ export default function ComparePage() {
                       {state.error ? (
                         <Text type="danger">{state.error}</Text>
                       ) : (
-                        <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
-                          {state.content}
-                          {!state.done && <span className="cursor">▊</span>}
-                        </pre>
+                        <MarkdownRenderer
+                          content={state.content}
+                          streaming={!state.done}
+                        />
                       )}
                     </div>
                   </div>
