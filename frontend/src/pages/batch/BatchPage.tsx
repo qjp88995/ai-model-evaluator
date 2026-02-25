@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PlayCircleOutlined } from "@ant-design/icons";
 import {
@@ -14,8 +14,9 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 
-import { evalApi,modelsApi, testsetsApi } from "../../services/api";
-import { EvalResult,EvalSession, LlmModel, TestSet } from "../../types";
+import { MarkdownRenderer } from "../../components/markdown";
+import { evalApi, modelsApi, testsetsApi } from "../../services/api";
+import { EvalResult, EvalSession, LlmModel, TestSet } from "../../types";
 
 export default function BatchPage() {
   const [models, setModels] = useState<LlmModel[]>([]);
@@ -255,7 +256,7 @@ export default function BatchPage() {
               <div>
                 <div>
                   <strong>回答：</strong>
-                  {record.response}
+                  <MarkdownRenderer content={record.response ?? ""} />
                 </div>
                 {record.scoreComment && (
                   <div>
