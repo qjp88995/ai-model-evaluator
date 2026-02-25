@@ -23,10 +23,26 @@ interface Props {
 }
 
 const STATUS_CONFIG = {
-  pending: { color: "default" as const, icon: <ClockCircleOutlined />, label: "等待中" },
-  running: { color: "processing" as const, icon: <LoadingOutlined />, label: "运行中" },
-  completed: { color: "success" as const, icon: <CheckCircleOutlined />, label: "已完成" },
-  failed: { color: "error" as const, icon: <CloseCircleOutlined />, label: "失败" },
+  pending: {
+    color: "default" as const,
+    icon: <ClockCircleOutlined />,
+    label: "等待中",
+  },
+  running: {
+    color: "processing" as const,
+    icon: <LoadingOutlined />,
+    label: "运行中",
+  },
+  completed: {
+    color: "success" as const,
+    icon: <CheckCircleOutlined />,
+    label: "已完成",
+  },
+  failed: {
+    color: "error" as const,
+    icon: <CloseCircleOutlined />,
+    label: "失败",
+  },
 };
 
 export default function BatchSessionCard({
@@ -37,12 +53,21 @@ export default function BatchSessionCard({
   onExport,
 }: Props) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const onUpdateRef = useRef(onUpdate);
+
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  });
 
   useEffect(() => {
     if (session.status === "pending" || session.status === "running") {
-      timerRef.current = setInterval(async () => {
-        const res = await evalApi.getSession(session.id);
-        onUpdate(res.data);
+      timerRef.current = setInterval(() => {
+        evalApi
+          .getSession(session.id)
+          .then((res) => onUpdateRef.current(res.data))
+          .catch((err) => {
+            console.error("Polling failed for session", session.id, err);
+          });
       }, 3000);
     }
     return () => {
@@ -51,13 +76,13 @@ export default function BatchSessionCard({
         timerRef.current = null;
       }
     };
-  }, [session.id, session.status, onUpdate]);
+  }, [session.id, session.status]);
 
   const statusCfg = STATUS_CONFIG[session.status];
   const total = session._count?.results ?? 0;
   const completedCount =
     session.results?.filter(
-      (r) => r.status === "success" || r.status === "failed"
+      (r) => r.status === "success" || r.status === "failed",
     ).length ?? 0;
   const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
@@ -71,10 +96,6 @@ export default function BatchSessionCard({
       }
     }
   }
-  const avgScores = Object.entries(scoreMap).map(([modelId, scores]) => ({
-    name: models.find((m) => m.id === modelId)?.name ?? modelId.slice(0, 8),
-    avg: scores.reduce((a, b) => a + b, 0) / scores.length,
-  }));
 
   const isActive = session.status === "pending" || session.status === "running";
 
@@ -100,14 +121,21 @@ export default function BatchSessionCard({
       )}
 
       {/* 平均分摘要 */}
-      {avgScores.length > 0 && (
+      {Object.keys(scoreMap).length > 0 && (
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500">
-          {avgScores.map(({ name, avg }) => (
-            <span key={name}>
-              {name}:{" "}
-              <span className="font-medium text-primary">{avg.toFixed(1)}</span>
-            </span>
-          ))}
+          {Object.entries(scoreMap).map(([modelId, scores]) => {
+            const name =
+              models.find((m) => m.id === modelId)?.name ?? modelId.slice(0, 8);
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            return (
+              <span key={modelId}>
+                {name}:{" "}
+                <span className="font-medium text-primary">
+                  {avg.toFixed(1)}
+                </span>
+              </span>
+            );
+          })}
         </div>
       )}
 
