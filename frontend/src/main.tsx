@@ -1,10 +1,51 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ConfigProvider, theme } from 'antd';
 import App from './App';
-import 'antd/dist/reset.css';
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: '#7c3aed',
+          colorLink: '#60a5fa',
+          colorSuccess: '#34d399',
+          colorWarning: '#fbbf24',
+          colorError: '#f87171',
+          colorBgBase: '#0d0d1a',
+          colorBgContainer: 'rgba(255, 255, 255, 0.04)',
+          colorBgElevated: '#1a1040',
+          colorBorder: 'rgba(139, 92, 246, 0.2)',
+          colorBorderSecondary: 'rgba(139, 92, 246, 0.12)',
+          colorText: '#e2e8f0',
+          colorTextSecondary: '#94a3b8',
+          borderRadius: 8,
+          fontFamily: '"Inter", "PingFang SC", "Microsoft YaHei", sans-serif',
+        },
+        components: {
+          Menu: {
+            darkItemBg: 'transparent',
+            darkSubMenuItemBg: 'transparent',
+            darkItemSelectedBg: 'rgba(124, 58, 237, 0.15)',
+          },
+          Table: {
+            headerBg: 'rgba(139, 92, 246, 0.08)',
+            rowHoverBg: 'rgba(139, 92, 246, 0.06)',
+          },
+          Modal: {
+            contentBg: '#1a1040',
+            headerBg: '#1a1040',
+          },
+          Card: {
+            colorBgContainer: 'rgba(255, 255, 255, 0.04)',
+          },
+        },
+      }}
+    >
+      <App />
+    </ConfigProvider>
   </React.StrictMode>,
 );

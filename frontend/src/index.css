@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* CSS 变量 - 色彩系统 */
+:root {
+  --bg-primary: radial-gradient(ellipse at top left, #1e1040 0%, #0d0d1a 60%, #050510 100%);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-bg-hover: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(139, 92, 246, 0.2);
+  --glass-border-hover: rgba(139, 92, 246, 0.4);
+  --glow-primary: 0 0 30px rgba(124, 58, 237, 0.15);
+  --glow-strong: 0 0 50px rgba(124, 58, 237, 0.3);
+  --color-primary: #7c3aed;
+  --color-accent: #60a5fa;
+  --color-success: #34d399;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+}
+
+/* 全局背景 */
+html, body {
+  background: var(--bg-primary);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+/* 毛玻璃卡片通用类 */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--glow-primary);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glow-strong);
+}
+
+/* Ant Design 组件覆盖 */
+.ant-table-wrapper .ant-table {
+  background: transparent !important;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr:hover > td {
+  background: rgba(139, 92, 246, 0.06) !important;
+}
+
+/* 光标闪烁动画（ComparePage 用） */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor {
+  animation: blink 1s step-end infinite;
+  color: var(--color-accent);
+}
+
+/* 渐变文字工具类 */
+.gradient-text {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
