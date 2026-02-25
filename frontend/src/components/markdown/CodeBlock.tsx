@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
 import { Button, message } from "antd";
@@ -29,6 +29,13 @@ export default function CodeBlock({
   children,
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const handleCopy = () => {
     const text = extractText(children);
@@ -37,7 +44,8 @@ export default function CodeBlock({
       .then(() => {
         setCopied(true);
         void message.success("已复制");
-        setTimeout(() => setCopied(false), 2000);
+        if (timerRef.current !== null) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), 2000);
       })
       .catch(() => {
         void message.error("复制失败，请手动复制");
