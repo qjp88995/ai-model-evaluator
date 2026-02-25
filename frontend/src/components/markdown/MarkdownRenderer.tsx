@@ -14,16 +14,24 @@ import CodeBlock from "./CodeBlock";
 function normalizeForStreaming(content: string): string {
   let result = content;
 
-  // 若 ``` 出现次数为奇数，说明有未闭合的代码块
+  // 补全未闭合的代码块（``` 出现奇数次）
   const fences = result.match(/```/g) ?? [];
   if (fences.length % 2 !== 0) {
     result += "\n```";
   }
 
-  // 若 $$ 出现次数为奇数，说明有未闭合的 LaTeX 块
-  const blockMath = result.match(/\$\$/g) ?? [];
-  if (blockMath.length % 2 !== 0) {
+  // 补全未闭合的 LaTeX 块（$$）
+  const blockMathCount = (result.match(/\$\$/g) ?? []).length;
+  if (blockMathCount % 2 !== 0) {
     result += "$$";
+  } else {
+    // $$ 已偶数（或不存在），检查行内 $ 是否未闭合
+    // 移除 $$ 后再统计单独的 $ 数量，避免重复计数
+    const stripped = result.replace(/\$\$/g, "");
+    const inlineMathCount = (stripped.match(/\$/g) ?? []).length;
+    if (inlineMathCount % 2 !== 0) {
+      result += "$";
+    }
   }
 
   return result;
