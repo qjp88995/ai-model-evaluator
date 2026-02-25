@@ -55,11 +55,11 @@ export default function App() {
   const currentLabel = menuItems.find((m) => m.key === current)?.label;
 
   return (
-    <Layout className="min-h-screen !bg-transparent">
+    <Layout className="min-h-screen bg-transparent">
       {/* 侧边栏 */}
       <Sider
         width={220}
-        className="!bg-[rgba(15,10,40,0.7)] backdrop-blur-[20px] [border-right:1px_solid_rgba(139,92,246,0.15)] fixed h-screen z-[100] flex flex-col"
+        className="bg-[rgba(15,10,40,0.7)] backdrop-blur-[20px] [border-right:1px_solid_rgba(139,92,246,0.15)] fixed h-screen z-[100] flex flex-col"
       >
         {/* Logo 区 */}
         <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_rgba(139,92,246,0.15)] shrink-0">
@@ -75,7 +75,7 @@ export default function App() {
           selectedKeys={[current]}
           items={menuItems}
           onClick={({ key }) => setCurrent(key)}
-          className="!bg-transparent !border-none flex-1 mt-2"
+          className="bg-transparent border-none flex-1 mt-2"
         />
 
         {/* 底部退出按钮 */}
@@ -86,7 +86,7 @@ export default function App() {
               type="text"
               block
               onClick={handleLogout}
-              className="!text-slate-400 text-left"
+              className="text-slate-400 text-left"
             >
               退出登录
             </Button>
@@ -95,7 +95,7 @@ export default function App() {
       </Sider>
 
       {/* 主内容区 */}
-      <Layout className="ml-[220px] !bg-transparent min-h-screen">
+      <Layout className="ml-[220px] bg-transparent min-h-screen">
         {/* 顶部标题栏 */}
         <div className="h-14 flex items-center px-6 bg-[rgba(15,10,40,0.5)] backdrop-blur-[12px] [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
           <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">

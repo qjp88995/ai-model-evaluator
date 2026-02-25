@@ -1,3 +1,6 @@
+/* 声明 CSS 层级顺序：antd 在 utilities 之前，Tailwind 工具类天然覆盖 antd，无需 !important */
+@layer theme, base, antd, components, utilities;
+
 @import "tailwindcss";
 
 /* CSS 变量 - 色彩系统 */
@@ -40,15 +43,15 @@ html, body {
   box-shadow: var(--glow-strong);
 }
 
-/* Ant Design 组件覆盖 */
+/* Ant Design 组件覆盖（无需 !important，未分层的样式优先级高于 @layer antd） */
 .ant-table-wrapper .ant-table {
-  background: transparent !important;
+  background: transparent;
 }
 
 .ant-table-wrapper .ant-table-thead > tr > th {
-  background: rgba(139, 92, 246, 0.08) !important;
-  border-bottom: 1px solid var(--glass-border) !important;
-  color: var(--text-secondary) !important;
+  background: rgba(139, 92, 246, 0.08);
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-secondary);
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -56,11 +59,11 @@ html, body {
 }
 
 .ant-table-wrapper .ant-table-tbody > tr > td {
-  border-bottom: 1px solid rgba(139, 92, 246, 0.08) !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
 }
 
 .ant-table-wrapper .ant-table-tbody > tr:hover > td {
-  background: rgba(139, 92, 246, 0.06) !important;
+  background: rgba(139, 92, 246, 0.06);
 }
 
 /* 光标闪烁动画（ComparePage 用） */

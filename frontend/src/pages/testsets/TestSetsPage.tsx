@@ -1,13 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
-  Table, Button, Modal, Form, Input, Space, Popconfirm, message,
-  Drawer, Tag, Upload, Typography,
-} from 'antd';
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Space,
+  Popconfirm,
+  message,
+  Drawer,
+  Tag,
+  Upload,
+  Typography,
+} from "antd";
 import {
-  PlusOutlined, EditOutlined, DeleteOutlined, UnorderedListOutlined, UploadOutlined,
-} from '@ant-design/icons';
-import { testsetsApi } from '../../services/api';
-import { TestSet, TestCase } from '../../types';
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UnorderedListOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { testsetsApi } from "../../services/api";
+import { TestSet, TestCase } from "../../types";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -39,28 +53,30 @@ export default function TestSetsPage() {
     setCurrentSet(res.data);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const handleSaveSet = async () => {
     const values = await setForm.validateFields();
     try {
       if (editingSet) {
         await testsetsApi.update(editingSet.id, values);
-        message.success('更新成功');
+        message.success("更新成功");
       } else {
         await testsetsApi.create(values);
-        message.success('创建成功');
+        message.success("创建成功");
       }
       setSetModalOpen(false);
       load();
     } catch {
-      message.error('操作失败');
+      message.error("操作失败");
     }
   };
 
   const handleDeleteSet = async (id: string) => {
     await testsetsApi.delete(id);
-    message.success('删除成功');
+    message.success("删除成功");
     load();
   };
 
@@ -77,17 +93,17 @@ export default function TestSetsPage() {
       } else {
         await testsetsApi.addCase(currentSet!.id, values);
       }
-      message.success('保存成功');
+      message.success("保存成功");
       setCaseModalOpen(false);
       loadSet(currentSet!.id);
     } catch {
-      message.error('操作失败');
+      message.error("操作失败");
     }
   };
 
   const handleDeleteCase = async (caseId: string) => {
     await testsetsApi.deleteCase(currentSet!.id, caseId);
-    message.success('删除成功');
+    message.success("删除成功");
     loadSet(currentSet!.id);
   };
 
@@ -95,21 +111,24 @@ export default function TestSetsPage() {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const text = e.target?.result as string;
-      const lines = text.split('\n').filter(Boolean);
-      const cases = lines.slice(1).map((line) => {
-        const cols = line.split(',');
-        return {
-          prompt: cols[0]?.trim().replace(/^"|"$/g, ''),
-          referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ''),
-          scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ''),
-        };
-      }).filter((c) => c.prompt);
+      const lines = text.split("\n").filter(Boolean);
+      const cases = lines
+        .slice(1)
+        .map((line) => {
+          const cols = line.split(",");
+          return {
+            prompt: cols[0]?.trim().replace(/^"|"$/g, ""),
+            referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ""),
+            scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ""),
+          };
+        })
+        .filter((c) => c.prompt);
       try {
         await testsetsApi.importCases(currentSet!.id, cases);
         message.success(`导入 ${cases.length} 条用例`);
         loadSet(currentSet!.id);
       } catch {
-        message.error('导入失败');
+        message.error("导入失败");
       }
     };
     reader.readAsText(file);
@@ -117,28 +136,43 @@ export default function TestSetsPage() {
   };
 
   const setColumns = [
-    { title: '名称', dataIndex: 'name', key: 'name' },
-    { title: '描述', dataIndex: 'description', key: 'description', ellipsis: true },
+    { title: "名称", dataIndex: "name", key: "name" },
     {
-      title: '用例数', key: 'count',
+      title: "描述",
+      dataIndex: "description",
+      key: "description",
+      ellipsis: true,
+    },
+    {
+      title: "用例数",
+      key: "count",
       render: (_: any, r: TestSet) => <Tag>{r._count?.testCases ?? 0}</Tag>,
     },
     {
-      title: '操作', key: 'actions',
+      title: "操作",
+      key: "actions",
       render: (_: any, record: TestSet) => (
         <Space>
-          <Button size="small" icon={<UnorderedListOutlined />} onClick={() => openDrawer(record)}>
+          <Button
+            size="small"
+            icon={<UnorderedListOutlined />}
+            onClick={() => openDrawer(record)}
+          >
             管理用例
           </Button>
           <Button
-            size="small" icon={<EditOutlined />}
+            size="small"
+            icon={<EditOutlined />}
             onClick={() => {
               setEditingSet(record);
               setForm.setFieldsValue(record);
               setSetModalOpen(true);
             }}
           />
-          <Popconfirm title="确认删除?" onConfirm={() => handleDeleteSet(record.id)}>
+          <Popconfirm
+            title="确认删除?"
+            onConfirm={() => handleDeleteSet(record.id)}
+          >
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -147,22 +181,37 @@ export default function TestSetsPage() {
   ];
 
   const caseColumns = [
-    { title: 'Prompt', dataIndex: 'prompt', key: 'prompt', ellipsis: true },
-    { title: '参考答案', dataIndex: 'referenceAnswer', key: 'referenceAnswer', ellipsis: true },
-    { title: '评分标准', dataIndex: 'scoringCriteria', key: 'scoringCriteria', ellipsis: true },
+    { title: "Prompt", dataIndex: "prompt", key: "prompt", ellipsis: true },
     {
-      title: '操作', key: 'actions',
+      title: "参考答案",
+      dataIndex: "referenceAnswer",
+      key: "referenceAnswer",
+      ellipsis: true,
+    },
+    {
+      title: "评分标准",
+      dataIndex: "scoringCriteria",
+      key: "scoringCriteria",
+      ellipsis: true,
+    },
+    {
+      title: "操作",
+      key: "actions",
       render: (_: any, record: TestCase) => (
         <Space>
           <Button
-            size="small" icon={<EditOutlined />}
+            size="small"
+            icon={<EditOutlined />}
             onClick={() => {
               setEditingCase(record);
               caseForm.setFieldsValue(record);
               setCaseModalOpen(true);
             }}
           />
-          <Popconfirm title="确认删除?" onConfirm={() => handleDeleteCase(record.id)}>
+          <Popconfirm
+            title="确认删除?"
+            onConfirm={() => handleDeleteCase(record.id)}
+          >
             <Button size="small" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
@@ -174,22 +223,28 @@ export default function TestSetsPage() {
     <div className="glass-card px-6 py-5">
       <div className="mb-4 flex justify-end">
         <Button
-          type="primary" icon={<PlusOutlined />}
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={() => {
             setEditingSet(null);
             setForm.resetFields();
             setSetModalOpen(true);
           }}
-          className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+          className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
         >
           新建测评集
         </Button>
       </div>
 
-      <Table rowKey="id" columns={setColumns} dataSource={sets} loading={loading} />
+      <Table
+        rowKey="id"
+        columns={setColumns}
+        dataSource={sets}
+        loading={loading}
+      />
 
       <Modal
-        title={editingSet ? '编辑测评集' : '新建测评集'}
+        title={editingSet ? "编辑测评集" : "新建测评集"}
         open={setModalOpen}
         onOk={handleSaveSet}
         onCancel={() => setSetModalOpen(false)}
@@ -212,17 +267,22 @@ export default function TestSetsPage() {
         width={800}
         extra={
           <Space>
-            <Upload accept=".csv" beforeUpload={handleImportCSV} showUploadList={false}>
+            <Upload
+              accept=".csv"
+              beforeUpload={handleImportCSV}
+              showUploadList={false}
+            >
               <Button icon={<UploadOutlined />}>导入 CSV</Button>
             </Upload>
             <Button
-              type="primary" icon={<PlusOutlined />}
+              type="primary"
+              icon={<PlusOutlined />}
               onClick={() => {
                 setEditingCase(null);
                 caseForm.resetFields();
                 setCaseModalOpen(true);
               }}
-              className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+              className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
             >
               添加用例
             </Button>
@@ -242,7 +302,7 @@ export default function TestSetsPage() {
       </Drawer>
 
       <Modal
-        title={editingCase ? '编辑用例' : '添加用例'}
+        title={editingCase ? "编辑用例" : "添加用例"}
         open={caseModalOpen}
         onOk={handleSaveCase}
         onCancel={() => setCaseModalOpen(false)}

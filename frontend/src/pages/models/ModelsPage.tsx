@@ -220,7 +220,7 @@ export default function ModelsPage() {
           type="primary"
           icon={<PlusOutlined />}
           onClick={openCreate}
-          className="!bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] !border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+          className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
         >
           添加模型
         </Button>
@@ -284,20 +284,10 @@ export default function ModelsPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <Form.Item name="temperature" label="Temperature">
-              <InputNumber
-                min={0}
-                max={2}
-                step={0.1}
-                className="w-full"
-              />
+              <InputNumber min={0} max={2} step={0.1} className="w-full" />
             </Form.Item>
             <Form.Item name="topP" label="Top P">
-              <InputNumber
-                min={0}
-                max={1}
-                step={0.1}
-                className="w-full"
-              />
+              <InputNumber min={0} max={1} step={0.1} className="w-full" />
             </Form.Item>
             <Form.Item name="maxTokens" label="Max Tokens">
               <InputNumber min={1} max={128000} className="w-full" />
