@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 import {
   LockOutlined,
@@ -9,12 +10,9 @@ import { Button, Form, Input, message } from "antd";
 
 import { authApi } from "../../services/api";
 
-interface Props {
-  onLogin: () => void;
-}
-
-export default function LoginPage({ onLogin }: Props) {
+export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (values: {
     username: string;
@@ -24,7 +22,7 @@ export default function LoginPage({ onLogin }: Props) {
     try {
       const res = await authApi.login(values.username, values.password);
       localStorage.setItem("token", res.data.access_token);
-      onLogin();
+      navigate("/models");
     } catch {
       message.error("用户名或密码错误");
     } finally {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
 import {
   BarChartOutlined,
@@ -11,14 +11,6 @@ import {
 } from "@ant-design/icons";
 import { Button, Menu, Tooltip } from "antd";
 
-import LoginPage from "./pages/auth/LoginPage";
-import BatchPage from "./pages/batch/BatchPage";
-import ComparePage from "./pages/compare/ComparePage";
-import HistoryPage from "./pages/history/HistoryPage";
-import ModelsPage from "./pages/models/ModelsPage";
-import StatsPage from "./pages/stats/StatsPage";
-import TestSetsPage from "./pages/testsets/TestSetsPage";
-
 const menuItems = [
   { key: "models", icon: <SettingOutlined />, label: "模型管理" },
   { key: "compare", icon: <RobotOutlined />, label: "实时对比" },
@@ -28,28 +20,16 @@ const menuItems = [
   { key: "stats", icon: <BarChartOutlined />, label: "用量统计" },
 ];
 
-const pageMap: Record<string, React.ReactNode> = {
-  models: <ModelsPage />,
-  compare: <ComparePage />,
-  batch: <BatchPage />,
-  testsets: <TestSetsPage />,
-  history: <HistoryPage />,
-  stats: <StatsPage />,
-};
+export default function AppLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-export default function App() {
-  const [current, setCurrent] = useState("models");
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token"),
-  );
-
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
-  }
+  // 从路径中提取当前页面 key，如 "/models" → "models"
+  const current = location.pathname.replace(/^\//, "") || "models";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsAuthenticated(false);
+    navigate("/login");
   };
 
   const currentLabel = menuItems.find((m) => m.key === current)?.label;
@@ -71,7 +51,7 @@ export default function App() {
           mode="inline"
           selectedKeys={[current]}
           items={menuItems}
-          onClick={({ key }) => setCurrent(key)}
+          onClick={({ key }) => navigate(`/${key}`)}
           className="bg-transparent border-none flex-1 mt-2"
         />
 
@@ -102,7 +82,9 @@ export default function App() {
         </header>
 
         {/* 页面内容 */}
-        <main className="flex-1 overflow-y-auto p-6">{pageMap[current]}</main>
+        <main className="flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

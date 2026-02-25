@@ -1,12 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router";
 
 import { StyleProvider } from "@ant-design/cssinjs";
 import { ConfigProvider, theme } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
 
-import App from "./App";
+import { router } from "./router";
 
 import "./index.css";
 
@@ -57,7 +58,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       }}
     >
       <StyleProvider layer>
-        <App />
+        <RouterProvider router={router} />
       </StyleProvider>
     </ConfigProvider>
   </React.StrictMode>,
