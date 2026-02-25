@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Select, Table, Tag } from 'antd';
+import { Select, Table, Tag } from 'antd';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   BarChart, Bar, ResponsiveContainer,
 } from 'recharts';
 import { statsApi } from '../../services/api';
 import { StatsOverview } from '../../types';
-
-const PROVIDER_COLORS: Record<string, string> = {
-  openai: '#10a37f', anthropic: '#d4a96a', zhipu: '#1677ff',
-  moonshot: '#722ed1', qianwen: '#13c2c2', custom: '#8c8c8c',
-};
 
 export default function StatsPage() {
   const [overview, setOverview] = useState<StatsOverview | null>(null);
@@ -40,33 +35,54 @@ export default function StatsPage() {
     { title: '总Token', key: 'total', render: (_: any, r: any) => (r.tokensInput ?? 0) + (r.tokensOutput ?? 0) },
   ];
 
+  const tooltipStyle = {
+    contentStyle: {
+      background: 'rgba(26, 16, 64, 0.95)',
+      border: '1px solid rgba(139, 92, 246, 0.3)',
+      borderRadius: 8,
+      color: '#e2e8f0',
+    },
+  };
+
+  const axisProps = {
+    stroke: '#94a3b8',
+    tick: { fill: '#94a3b8', fontSize: 12 },
+  };
+
   return (
     <>
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col span={4}>
-          <Card><Statistic title="总请求数" value={overview?.totalRequests ?? 0} /></Card>
-        </Col>
-        <Col span={4}>
-          <Card><Statistic title="输入 Token" value={overview?.totalTokensInput ?? 0} /></Card>
-        </Col>
-        <Col span={4}>
-          <Card><Statistic title="输出 Token" value={overview?.totalTokensOutput ?? 0} /></Card>
-        </Col>
-        <Col span={4}>
-          <Card><Statistic title="总 Token" value={(overview?.totalTokensInput ?? 0) + (overview?.totalTokensOutput ?? 0)} /></Card>
-        </Col>
-        <Col span={4}>
-          <Card><Statistic title="活跃模型" value={overview?.activeModels ?? 0} /></Card>
-        </Col>
-        <Col span={4}>
-          <Card><Statistic title="评测会话" value={overview?.totalSessions ?? 0} /></Card>
-        </Col>
-      </Row>
+      {/* 统计卡片行 */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(6, 1fr)',
+          gap: 16,
+          marginBottom: 20,
+        }}
+      >
+        {[
+          { title: '总请求数', value: overview?.totalRequests ?? 0, color: '#a78bfa' },
+          { title: '输入 Token', value: overview?.totalTokensInput ?? 0, color: '#60a5fa' },
+          { title: '输出 Token', value: overview?.totalTokensOutput ?? 0, color: '#34d399' },
+          { title: '总 Token', value: (overview?.totalTokensInput ?? 0) + (overview?.totalTokensOutput ?? 0), color: '#fbbf24' },
+          { title: '活跃模型', value: overview?.activeModels ?? 0, color: '#f472b6' },
+          { title: '评测会话', value: overview?.totalSessions ?? 0, color: '#a78bfa' },
+        ].map((item) => (
+          <div key={item.title} className="glass-card" style={{ padding: '16px 20px' }}>
+            <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 8, letterSpacing: '0.05em' }}>
+              {item.title}
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: item.color }}>
+              {item.value.toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
 
-      <Card
-        title="Token 用量趋势"
-        style={{ marginBottom: 16 }}
-        extra={
+      {/* Token 趋势图 */}
+      <div className="glass-card" style={{ padding: '20px 24px', marginBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <span style={{ fontWeight: 600, color: '#e2e8f0' }}>Token 用量趋势</span>
           <Select
             value={days}
             onChange={setDays}
@@ -77,47 +93,51 @@ export default function StatsPage() {
             ]}
             style={{ width: 120 }}
           />
-        }
-      >
+        </div>
         <ResponsiveContainer width="100%" height={280}>
           <AreaChart data={trend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />
+            <XAxis dataKey="date" {...axisProps} />
+            <YAxis {...axisProps} />
+            <Tooltip {...tooltipStyle} />
             <Legend />
-            <Area type="monotone" dataKey="tokensInput" name="输入Token" stackId="1" stroke="#1677ff" fill="#e6f4ff" />
-            <Area type="monotone" dataKey="tokensOutput" name="输出Token" stackId="1" stroke="#52c41a" fill="#f6ffed" />
+            <Area type="monotone" dataKey="tokensInput" name="输入Token" stackId="1" stroke="#7c3aed" fill="rgba(124, 58, 237, 0.15)" />
+            <Area type="monotone" dataKey="tokensOutput" name="输出Token" stackId="1" stroke="#34d399" fill="rgba(52, 211, 153, 0.15)" />
           </AreaChart>
         </ResponsiveContainer>
-      </Card>
+      </div>
 
-      <Row gutter={[16, 16]}>
-        <Col span={14}>
-          <Card title="各模型用量排行">
-            <Table
-              rowKey="modelId"
-              size="small"
-              columns={modelColumns}
-              dataSource={modelStats}
-              pagination={false}
-            />
-          </Card>
-        </Col>
-        <Col span={10}>
-          <Card title="模型请求数对比">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={modelStats.slice(0, 8)} layout="vertical" margin={{ left: 80 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="modelName" width={80} />
-                <Tooltip />
-                <Bar dataKey="requestCount" name="请求数" fill="#1677ff" />
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-      </Row>
+      {/* 底部两列 */}
+      <div style={{ display: 'grid', gridTemplateColumns: '14fr 10fr', gap: 16 }}>
+        <div className="glass-card" style={{ padding: '20px 24px' }}>
+          <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: 16 }}>各模型用量排行</div>
+          <Table
+            rowKey="modelId"
+            size="small"
+            columns={modelColumns}
+            dataSource={modelStats}
+            pagination={false}
+          />
+        </div>
+        <div className="glass-card" style={{ padding: '20px 24px' }}>
+          <div style={{ fontWeight: 600, color: '#e2e8f0', marginBottom: 16 }}>模型请求数对比</div>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={modelStats.slice(0, 8)} layout="vertical" margin={{ left: 80 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />
+              <XAxis type="number" {...axisProps} />
+              <YAxis type="category" dataKey="modelName" width={80} {...axisProps} />
+              <Tooltip {...tooltipStyle} />
+              <defs>
+                <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#7c3aed" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+              </defs>
+              <Bar dataKey="requestCount" name="请求数" fill="url(#barGradient)" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </>
   );
 }
