@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   ClearOutlined,
+  CopyOutlined,
+  DownloadOutlined,
   DownOutlined,
   SendOutlined,
   UpOutlined,
@@ -16,6 +18,7 @@ import {
   Space,
   Spin,
   Tag,
+  Tooltip,
   Typography,
 } from "antd";
 
@@ -51,6 +54,7 @@ export default function ComparePage() {
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   const [running, setRunning] = useState(false);
   const [modelStates, setModelStates] = useState<ModelState[]>([]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const eventSourcesRef = useRef<EventSource[]>([]);
   const contentRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -75,6 +79,7 @@ export default function ComparePage() {
     if (selectedIds.length === 0) return message.warning("请选择至少一个模型");
 
     setRunning(true);
+    setSessionId(null);
     const initialStates = selectedIds.map((id) => ({
       id,
       name: models.find((m) => m.id === id)?.name ?? id,
@@ -89,7 +94,8 @@ export default function ComparePage() {
         prompt: prompt.trim(),
         systemPrompt: systemPrompt.trim() || undefined,
       });
-      const sessionId = res.data.id;
+      const sid = res.data.id;
+      setSessionId(sid);
 
       // 关闭上一次残留的连接
       eventSourcesRef.current.forEach((es) => es.close());
@@ -101,7 +107,7 @@ export default function ComparePage() {
       selectedIds.forEach((modelId) => {
         const token = localStorage.getItem("token") ?? "";
         const es = new EventSource(
-          `/api/eval/compare/${sessionId}/stream/${modelId}?token=${encodeURIComponent(token)}`,
+          `/api/eval/compare/${sid}/stream/${modelId}?token=${encodeURIComponent(token)}`,
         );
         eventSourcesRef.current.push(es);
 
@@ -158,7 +164,32 @@ export default function ComparePage() {
     eventSourcesRef.current.forEach((es) => es.close());
     eventSourcesRef.current = [];
     setModelStates([]);
+    setSessionId(null);
     setRunning(false);
+  };
+
+  const handleCopy = (content: string) => {
+    navigator.clipboard.writeText(content).then(() => {
+      message.success("已复制");
+    });
+  };
+
+  const handleExport = async () => {
+    if (!sessionId) return;
+    try {
+      const res = await evalApi.exportSession(sessionId);
+      const blob = new Blob([JSON.stringify(res.data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `compare-${sessionId}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      message.error("导出失败");
+    }
   };
 
   const modelOptions = models.map((m) => ({
@@ -167,6 +198,8 @@ export default function ComparePage() {
   }));
 
   const colSpan = getColSpan(modelStates.length);
+  const allDone =
+    modelStates.length > 0 && modelStates.every((s) => s.done) && !running;
 
   return (
     <div>
@@ -232,60 +265,102 @@ export default function ComparePage() {
         </Space>
       </div>
 
+      {/* 空状态引导 */}
+      {modelStates.length === 0 && (
+        <div className="glass-card flex flex-col items-center justify-center py-20 text-slate-500 select-none">
+          <SendOutlined className="text-4xl mb-4 opacity-20" />
+          <p className="text-sm m-0">
+            选择模型，输入 Prompt，点击「开始对比」
+          </p>
+        </div>
+      )}
+
       {modelStates.length > 0 && (
-        <Row gutter={[16, 16]}>
-          {modelStates.map((state) => (
-            <Col key={state.id} xs={24} sm={24} md={colSpan}>
-              <div className="glass-card px-5 py-4 flex flex-col min-h-60">
-                {/* 标题行 */}
-                <div className="flex justify-between items-center mb-3 shrink-0">
-                  <Space>
-                    <span className="font-semibold text-slate-200">
-                      {state.name}
-                    </span>
-                    {state.done ? (
-                      state.error ? (
-                        <Tag color="red">失败</Tag>
+        <>
+          <Row gutter={[16, 16]}>
+            {modelStates.map((state) => {
+              const model = models.find((m) => m.id === state.id);
+              return (
+                <Col key={state.id} xs={24} sm={24} md={colSpan}>
+                  <div className="glass-card px-5 py-4 flex flex-col min-h-60">
+                    {/* 标题行 */}
+                    <div className="flex justify-between items-start mb-3 shrink-0">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-slate-200">
+                            {state.name}
+                          </span>
+                          {state.done ? (
+                            state.error ? (
+                              <Tag color="red">失败</Tag>
+                            ) : (
+                              <Tag color="green">完成</Tag>
+                            )
+                          ) : (
+                            <Spin size="small" />
+                          )}
+                        </div>
+                        {model && (
+                          <div className="text-xs text-slate-500 mt-0.5">
+                            {model.modelId} · temp {model.temperature}
+                          </div>
+                        )}
+                      </div>
+                      <Space size={4} className="shrink-0 ml-2">
+                        {state.done && !state.error && (
+                          <>
+                            <Text type="secondary" className="text-xs">
+                              {state.responseTimeMs}ms
+                            </Text>
+                            <Text type="secondary" className="text-xs">
+                              ↑{state.tokensInput} ↓{state.tokensOutput}
+                            </Text>
+                            <Tooltip title="复制">
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<CopyOutlined />}
+                                onClick={() => handleCopy(state.content)}
+                                className="text-slate-400 hover:text-slate-200"
+                              />
+                            </Tooltip>
+                          </>
+                        )}
+                      </Space>
+                    </div>
+                    {/* 内容区：限制最大高度，流式时自动滚底 */}
+                    <div
+                      ref={(el) => {
+                        if (el) contentRefsRef.current.set(state.id, el);
+                        else contentRefsRef.current.delete(state.id);
+                      }}
+                      className="overflow-y-auto flex-1"
+                      style={{ maxHeight: "60vh" }}
+                    >
+                      {state.error ? (
+                        <Text type="danger">{state.error}</Text>
                       ) : (
-                        <Tag color="green">完成</Tag>
-                      )
-                    ) : (
-                      <Spin size="small" />
-                    )}
-                  </Space>
-                  {state.done && !state.error && (
-                    <Space size={4}>
-                      <Text type="secondary" className="text-xs">
-                        {state.responseTimeMs}ms
-                      </Text>
-                      <Text type="secondary" className="text-xs">
-                        ↑{state.tokensInput} ↓{state.tokensOutput}
-                      </Text>
-                    </Space>
-                  )}
-                </div>
-                {/* 内容区：限制最大高度，流式时自动滚底 */}
-                <div
-                  ref={(el) => {
-                    if (el) contentRefsRef.current.set(state.id, el);
-                    else contentRefsRef.current.delete(state.id);
-                  }}
-                  className="overflow-y-auto flex-1"
-                  style={{ maxHeight: "60vh" }}
-                >
-                  {state.error ? (
-                    <Text type="danger">{state.error}</Text>
-                  ) : (
-                    <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
-                      {state.content}
-                      {!state.done && <span className="cursor">▊</span>}
-                    </pre>
-                  )}
-                </div>
-              </div>
-            </Col>
-          ))}
-        </Row>
+                        <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
+                          {state.content}
+                          {!state.done && <span className="cursor">▊</span>}
+                        </pre>
+                      )}
+                    </div>
+                  </div>
+                </Col>
+              );
+            })}
+          </Row>
+
+          {/* 全部完成后显示导出按钮 */}
+          {allDone && sessionId && (
+            <div className="flex justify-end mt-4">
+              <Button icon={<DownloadOutlined />} onClick={handleExport}>
+                导出本次对比
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
