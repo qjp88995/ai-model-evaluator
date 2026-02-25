@@ -37,13 +37,38 @@
   --bg-header: rgba(15, 10, 40, 0.5);
 }
 
-/* 全局背景 */
+/* 全局背景与滚动条 */
 @layer base {
   html, body {
     background: var(--bg-primary);
     background-attachment: fixed;
     min-height: 100vh;
     color: var(--text-primary);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-border) transparent;
+  }
+
+  /* Chrome / Edge / Safari */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--glass-border-hover);
   }
 }
 
