@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Card,
   Select,
   Button,
   Form,
@@ -9,7 +8,6 @@ import {
   Table,
   Tag,
   Space,
-  Progress,
   Modal,
 } from "antd";
 import { PlayCircleOutlined } from "@ant-design/icons";
@@ -167,8 +165,9 @@ export default function BatchPage() {
   ];
 
   return (
-    <>
-      <Card title="新建批量测评" style={{ marginBottom: 16 }}>
+    <div className="glass-card" style={{ padding: "20px 24px" }}>
+      <div className="glass-card" style={{ padding: "20px 24px", marginBottom: 16 }}>
+        <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 16 }}>新建批量测评</div>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="任务名称">
             <Input placeholder="可选，留空自动生成" />
@@ -213,28 +212,32 @@ export default function BatchPage() {
               icon={<PlayCircleOutlined />}
               loading={loading}
               onClick={handleStart}
+              style={{
+                background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
+                border: "none",
+                boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
+              }}
             >
               开始测评
             </Button>
           </Form.Item>
         </Form>
-      </Card>
+      </div>
 
-      <Card
-        title="测评历史"
-        extra={
+      <div className="glass-card" style={{ padding: "20px 24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ fontWeight: 600, fontSize: 16 }}>测评历史</div>
           <Button size="small" onClick={load}>
             刷新
           </Button>
-        }
-      >
+        </div>
         <Table
           rowKey="id"
           columns={columns}
           dataSource={sessions}
           pagination={{ pageSize: 5 }}
         />
-      </Card>
+      </div>
 
       <Modal
         title="测评结果详情"
@@ -273,6 +276,6 @@ export default function BatchPage() {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 }

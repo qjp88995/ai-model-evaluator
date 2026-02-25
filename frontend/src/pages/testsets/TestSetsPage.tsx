@@ -171,7 +171,7 @@ export default function TestSetsPage() {
   ];
 
   return (
-    <>
+    <div className="glass-card" style={{ padding: '20px 24px' }}>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           type="primary" icon={<PlusOutlined />}
@@ -179,6 +179,11 @@ export default function TestSetsPage() {
             setEditingSet(null);
             setForm.resetFields();
             setSetModalOpen(true);
+          }}
+          style={{
+            background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+            border: 'none',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
           }}
         >
           新建测评集
@@ -221,6 +226,11 @@ export default function TestSetsPage() {
                 caseForm.resetFields();
                 setCaseModalOpen(true);
               }}
+              style={{
+                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
+              }}
             >
               添加用例
             </Button>
@@ -258,6 +268,6 @@ export default function TestSetsPage() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }

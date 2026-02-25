@@ -161,7 +161,7 @@ export default function HistoryPage() {
   ];
 
   return (
-    <>
+    <div className="glass-card" style={{ padding: "20px 24px" }}>
       <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
         <Select
           placeholder="筛选类型"
@@ -224,6 +224,6 @@ export default function HistoryPage() {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 }
