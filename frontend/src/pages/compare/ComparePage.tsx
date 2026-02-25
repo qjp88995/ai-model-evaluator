@@ -22,9 +22,9 @@ import {
   Typography,
 } from "antd";
 
+import { MarkdownRenderer } from "../../components/markdown";
 import { evalApi, modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
-import { MarkdownRenderer } from "../../components/markdown";
 
 const { TextArea } = Input;
 const { Text } = Typography;

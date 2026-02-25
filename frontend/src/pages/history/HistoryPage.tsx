@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Button, Modal, Select, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 
+import { MarkdownRenderer } from "../../components/markdown";
 import { evalApi, modelsApi } from "../../services/api";
 import { EvalResult, EvalSession, LlmModel } from "../../types";
-import { MarkdownRenderer } from "../../components/markdown";
 
 const statusColor: Record<string, string> = {
   pending: "default",
