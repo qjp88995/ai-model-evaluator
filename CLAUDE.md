@@ -42,6 +42,26 @@ docker compose up -d --build   # 代码变更后重建
 
 **前端路由**：无 react-router，`App.tsx` 用 state 切换页面；`/api` 请求由 Vite proxy 转发至 `localhost:3001`
 
+## 前端样式规范（Tailwind v4）
+
+**CSS 分层**：`index.css` 按 `@theme → :root → @layer base → @layer components → @utility → antd 覆盖` 组织
+- 颜色令牌放 `@theme`（生成 `text-primary` 等工具类）
+- 渐变/阴影/毛玻璃等复合值放 `:root`
+- 组件级 class（`.glass-card`）放 `@layer components`
+- 单用途工具类（`.gradient-text`）用 `@utility` 定义
+- `@keyframes` 写在 `@theme` 内并以 `--animate-*` 引用
+
+**已有 CSS 变量（写新代码时优先复用，勿硬编码）**：
+- `--gradient-primary`：`linear-gradient(135deg, #7c3aed, #3b82f6)`（按钮/装饰渐变）
+- `--shadow-btn` / `--shadow-btn-lg`：主色按钮阴影
+- `--bg-sidebar` / `--bg-header`：侧边栏/顶栏背景
+- `--glass-border` / `--glass-bg` / `--glow-primary`：毛玻璃卡片元素
+
+**Tailwind v4 类名写法**：
+- CSS 变量引用：`bg-(--gradient-primary)` 而非 `bg-[var(--gradient-primary)]`
+- 像素转数字单位：`w-150`（600px）、`ml-55`（220px）、`-bottom-12.5`（50px）等
+- 规范类名替代任意值：`tracking-wider`、`backdrop-blur-md`、`wrap-break-word`、`z-100`
+
 ## 开发注意事项
 
 - 修改 `prisma/schema.prisma` 后必须运行 `pnpm prisma:dev` 生成迁移文件
