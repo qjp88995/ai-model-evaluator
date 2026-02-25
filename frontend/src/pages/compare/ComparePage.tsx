@@ -170,9 +170,14 @@ export default function ComparePage() {
   };
 
   const handleCopy = (content: string) => {
-    navigator.clipboard.writeText(content).then(() => {
-      message.success("已复制");
-    });
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        void message.success("已复制");
+      })
+      .catch(() => {
+        void message.error("复制失败，请手动复制");
+      });
   };
 
   const handleExport = async () => {
