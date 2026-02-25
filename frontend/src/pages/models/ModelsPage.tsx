@@ -241,6 +241,7 @@ export default function ModelsPage() {
         onCancel={() => setModalOpen(false)}
         width={640}
         destroyOnClose
+        styles={{ body: { maxHeight: "65vh", overflowY: "auto" } }}
       >
         <Form form={form} layout="vertical" className="mt-4">
           <Form.Item name="name" label="显示名称" rules={[{ required: true }]}>
