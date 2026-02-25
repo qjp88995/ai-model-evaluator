@@ -95,9 +95,9 @@ export default function App() {
       </Sider>
 
       {/* 主内容区 */}
-      <Layout className="ml-[220px] bg-transparent min-h-screen">
+      <Layout className="ml-55 bg-transparent min-h-screen">
         {/* 顶部标题栏 */}
-        <div className="h-14 flex items-center px-6 bg-[var(--bg-header)] backdrop-blur-[12px] [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
+        <div className="h-14 flex items-center px-6 bg-[var(--bg-header)] backdrop-blur-md [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
           <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--gradient-primary)] shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
             {currentLabel}

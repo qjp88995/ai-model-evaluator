@@ -197,7 +197,7 @@ export default function ComparePage() {
               sm={24}
               md={modelStates.length === 1 ? 24 : 12}
             >
-              <div className="glass-card px-5 py-4 min-h-[240px]">
+              <div className="glass-card px-5 py-4 min-h-60">
                 {/* 标题行 */}
                 <div className="flex justify-between items-center mb-3">
                   <Space>

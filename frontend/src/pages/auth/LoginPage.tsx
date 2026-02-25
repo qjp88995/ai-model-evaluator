@@ -33,11 +33,11 @@ export default function LoginPage({ onLogin }: Props) {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* 背景光晕装饰 */}
-      <div className="absolute w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.15)_0%,transparent_70%)] -top-[100px] -left-[100px] pointer-events-none" />
-      <div className="absolute w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.12)_0%,transparent_70%)] -bottom-[50px] right-[10%] pointer-events-none" />
+      <div className="absolute w-150 h-150 rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.15)_0%,transparent_70%)] -top-25 -left-25 pointer-events-none" />
+      <div className="absolute w-100 h-100 rounded-full bg-[radial-gradient(circle,rgba(96,165,250,0.12)_0%,transparent_70%)] -bottom-[50px] right-[10%] pointer-events-none" />
 
       {/* 登录卡片 */}
-      <div className="glass-card w-[380px] px-9 py-10">
+      <div className="glass-card w-95 px-9 py-10">
         {/* 图标 + 标题 */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-[var(--gradient-primary)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
@@ -46,7 +46,7 @@ export default function LoginPage({ onLogin }: Props) {
           <h1 className="gradient-text text-[22px] font-bold m-0 leading-[1.3]">
             大模型评测平台
           </h1>
-          <p className="text-slate-400 text-[13px] m-0 mt-[6px]">
+          <p className="text-slate-400 text-[13px] m-0 mt-1.5">
             AI Model Evaluation System
           </p>
         </div>
