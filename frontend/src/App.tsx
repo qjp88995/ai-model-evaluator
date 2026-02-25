@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Layout, Menu, Button, Tooltip } from "antd";
+import { Menu, Button, Tooltip } from "antd";
 import {
   LogoutOutlined,
   RobotOutlined,
@@ -16,8 +16,6 @@ import TestSetsPage from "./pages/testsets/TestSetsPage";
 import HistoryPage from "./pages/history/HistoryPage";
 import StatsPage from "./pages/stats/StatsPage";
 import LoginPage from "./pages/auth/LoginPage";
-
-const { Sider, Content } = Layout;
 
 const menuItems = [
   { key: "models", icon: <SettingOutlined />, label: "模型管理" },
@@ -55,12 +53,9 @@ export default function App() {
   const currentLabel = menuItems.find((m) => m.key === current)?.label;
 
   return (
-    <Layout className="min-h-screen bg-transparent">
+    <div className="flex h-screen overflow-hidden">
       {/* 侧边栏 */}
-      <Sider
-        width={220}
-        className="bg-(--bg-sidebar) backdrop-blur-[20px] [border-right:1px_solid_var(--glass-border)] fixed h-screen z-100 flex flex-col"
-      >
+      <aside className="w-55 shrink-0 flex flex-col bg-(--bg-sidebar) backdrop-blur-[20px] [border-right:1px_solid_var(--glass-border)] overflow-y-auto">
         {/* Logo 区 */}
         <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_var(--glass-border)] shrink-0">
           <span className="gradient-text text-base font-bold tracking-wider">
@@ -92,23 +87,21 @@ export default function App() {
             </Button>
           </Tooltip>
         </div>
-      </Sider>
+      </aside>
 
       {/* 主内容区 */}
-      <Layout className="ml-55 bg-transparent min-h-screen">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* 顶部标题栏 */}
-        <div className="h-14 flex items-center px-6 bg-(--bg-header) backdrop-blur-md [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-99">
+        <header className="h-14 shrink-0 flex items-center px-6 bg-(--bg-header) backdrop-blur-md [border-bottom:1px_solid_rgba(139,92,246,0.1)]">
           <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">
             <span className="w-1.5 h-1.5 rounded-full bg-(--gradient-primary) shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
             {currentLabel}
           </span>
-        </div>
+        </header>
 
         {/* 页面内容 */}
-        <Content className="p-6 min-h-[calc(100vh-56px)]">
-          {pageMap[current]}
-        </Content>
-      </Layout>
-    </Layout>
+        <main className="flex-1 overflow-y-auto p-6">{pageMap[current]}</main>
+      </div>
+    </div>
   );
 }
