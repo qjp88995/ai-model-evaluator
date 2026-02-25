@@ -18,7 +18,7 @@ RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml* ./
 COPY prisma ./prisma
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile && pnpm exec prisma generate
 
 COPY --from=builder /app/dist ./dist
 
