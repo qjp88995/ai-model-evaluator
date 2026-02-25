@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ClearOutlined, SendOutlined } from "@ant-design/icons";
+import {
+  ClearOutlined,
+  DownOutlined,
+  SendOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -31,20 +36,39 @@ interface ModelState {
   error?: string;
 }
 
+// 根据模型数量计算列宽：1→全宽，3→三列，其余→两列
+function getColSpan(total: number): number {
+  if (total === 1) return 24;
+  if (total === 3) return 8;
+  return 12;
+}
+
 export default function ComparePage() {
   const [models, setModels] = useState<LlmModel[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [prompt, setPrompt] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
+  const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   const [running, setRunning] = useState(false);
   const [modelStates, setModelStates] = useState<ModelState[]>([]);
   const eventSourcesRef = useRef<EventSource[]>([]);
+  const contentRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
     modelsApi
       .list()
       .then((res) => setModels(res.data.filter((m: LlmModel) => m.isActive)));
   }, []);
+
+  // 流式输出时自动滚到底部
+  useEffect(() => {
+    modelStates.forEach((s) => {
+      if (!s.done) {
+        const el = contentRefsRef.current.get(s.id);
+        if (el) el.scrollTop = el.scrollHeight;
+      }
+    });
+  }, [modelStates]);
 
   const handleRun = async () => {
     if (!prompt.trim()) return message.warning("请输入 Prompt");
@@ -142,6 +166,8 @@ export default function ComparePage() {
     label: `${m.name} (${m.modelId})`,
   }));
 
+  const colSpan = getColSpan(modelStates.length);
+
   return (
     <div>
       <div className="glass-card px-6 py-5 mb-5">
@@ -155,13 +181,29 @@ export default function ComparePage() {
             className="w-full"
             maxTagCount={5}
           />
-          <TextArea
-            placeholder="系统提示词（可选）"
-            value={systemPrompt}
-            onChange={(e) => setSystemPrompt(e.target.value)}
-            rows={2}
-            className="resize-none"
-          />
+          {/* 系统提示词折叠区 */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowSystemPrompt((v) => !v)}
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors mb-2 cursor-pointer bg-transparent border-0 p-0"
+            >
+              {showSystemPrompt ? <UpOutlined /> : <DownOutlined />}
+              系统提示词（可选）
+              {!showSystemPrompt && systemPrompt && (
+                <span className="text-violet-400 ml-1">· 已设置</span>
+              )}
+            </button>
+            {showSystemPrompt && (
+              <TextArea
+                placeholder="输入系统提示词..."
+                value={systemPrompt}
+                onChange={(e) => setSystemPrompt(e.target.value)}
+                rows={2}
+                className="resize-none"
+              />
+            )}
+          </div>
           <TextArea
             placeholder="输入 Prompt，所有模型同时响应..."
             value={prompt}
@@ -193,15 +235,10 @@ export default function ComparePage() {
       {modelStates.length > 0 && (
         <Row gutter={[16, 16]}>
           {modelStates.map((state) => (
-            <Col
-              key={state.id}
-              xs={24}
-              sm={24}
-              md={modelStates.length === 1 ? 24 : 12}
-            >
-              <div className="glass-card px-5 py-4 min-h-60">
+            <Col key={state.id} xs={24} sm={24} md={colSpan}>
+              <div className="glass-card px-5 py-4 flex flex-col min-h-60">
                 {/* 标题行 */}
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex justify-between items-center mb-3 shrink-0">
                   <Space>
                     <span className="font-semibold text-slate-200">
                       {state.name}
@@ -227,15 +264,24 @@ export default function ComparePage() {
                     </Space>
                   )}
                 </div>
-                {/* 内容区 */}
-                {state.error ? (
-                  <Text type="danger">{state.error}</Text>
-                ) : (
-                  <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
-                    {state.content}
-                    {!state.done && <span className="cursor">▊</span>}
-                  </pre>
-                )}
+                {/* 内容区：限制最大高度，流式时自动滚底 */}
+                <div
+                  ref={(el) => {
+                    if (el) contentRefsRef.current.set(state.id, el);
+                    else contentRefsRef.current.delete(state.id);
+                  }}
+                  className="overflow-y-auto flex-1"
+                  style={{ maxHeight: "60vh" }}
+                >
+                  {state.error ? (
+                    <Text type="danger">{state.error}</Text>
+                  ) : (
+                    <pre className="whitespace-pre-wrap wrap-break-word m-0 font-[inherit] text-sm text-slate-200">
+                      {state.content}
+                      {!state.done && <span className="cursor">▊</span>}
+                    </pre>
+                  )}
+                </div>
               </div>
             </Col>
           ))}
