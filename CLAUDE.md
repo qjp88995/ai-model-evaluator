@@ -62,6 +62,23 @@ docker compose up -d --build   # 代码变更后重建
 - 像素转数字单位：`w-150`（600px）、`ml-55`（220px）、`-bottom-12.5`（50px）等
 - 规范类名替代任意值：`tracking-wider`、`backdrop-blur-md`、`wrap-break-word`、`z-100`
 
+## 前端 ESLint 规范
+
+构建脚本已集成 ESLint：`eslint src && tsc -b && vite build`，CI 自动拦截。
+
+```bash
+cd frontend
+pnpm lint        # 检查
+pnpm lint:fix    # 自动修复
+```
+
+已启用规则：
+- `@typescript-eslint/no-deprecated`（需 type-aware 模式）—— 检测 antd 等库的弃用属性，常见替换：
+  - `destroyOnClose` → `destroyOnHidden`（Modal/Drawer）
+  - `Space direction` → `orientation`
+  - `Drawer width={n}` → `size="large"`（预设：default 378px / large 736px）
+- `simple-import-sort`：导入分组顺序 react → 三方库 → 相对路径 → CSS
+
 ## 开发注意事项
 
 - 修改 `prisma/schema.prisma` 后必须运行 `pnpm prisma:dev` 生成迁移文件
