@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 
 import { evalApi, modelsApi } from "../../services/api";
 import { EvalResult, EvalSession, LlmModel } from "../../types";
+import { MarkdownRenderer } from "../../components/markdown";
 
 const statusColor: Record<string, string> = {
   pending: "default",
@@ -205,7 +206,7 @@ export default function HistoryPage() {
               <div>
                 <div>
                   <strong>回答：</strong>
-                  <pre className="whitespace-pre-wrap m-0">{r.response}</pre>
+                  <MarkdownRenderer content={r.response ?? ""} />
                 </div>
                 {r.scoreComment && (
                   <div>
