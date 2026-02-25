@@ -74,7 +74,7 @@ export default function AppLayout() {
       {/* 主内容区 */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* 顶部标题栏 */}
-        <header className="h-14 shrink-0 flex items-center px-6 bg-(--bg-header) backdrop-blur-md [border-bottom:1px_solid_rgba(139,92,246,0.1)]">
+        <header className="h-16 shrink-0 flex items-center px-6 bg-(--bg-header) backdrop-blur-md [border-bottom:1px_solid_rgba(139,92,246,0.1)]">
           <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">
             <span className="w-1.5 h-1.5 rounded-full bg-(--gradient-primary) shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
             {currentLabel}
