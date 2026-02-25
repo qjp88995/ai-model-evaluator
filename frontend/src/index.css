@@ -3,7 +3,22 @@
 
 @import "tailwindcss";
 
-/* CSS 变量 - 色彩系统 */
+/* Tailwind v4 主题令牌 — 生成 text-primary / bg-primary 等工具类 */
+@theme {
+  --color-primary: #7c3aed;
+  --color-accent: #60a5fa;
+  --color-success: #34d399;
+
+  /* 动画令牌 */
+  --animate-blink: blink 1s step-end infinite;
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+}
+
+/* CSS 变量 - 非 Tailwind 主题的设计令牌（渐变、毛玻璃、阴影等） */
 :root {
   --bg-primary: radial-gradient(ellipse at top left, #1e1040 0%, #0d0d1a 60%, #050510 100%);
   --glass-bg: rgba(255, 255, 255, 0.04);
@@ -12,35 +27,55 @@
   --glass-border-hover: rgba(139, 92, 246, 0.4);
   --glow-primary: 0 0 30px rgba(124, 58, 237, 0.15);
   --glow-strong: 0 0 50px rgba(124, 58, 237, 0.3);
-  --color-primary: #7c3aed;
-  --color-accent: #60a5fa;
-  --color-success: #34d399;
   --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
+  /* 多处复用的渐变与阴影 */
+  --gradient-primary: linear-gradient(135deg, #7c3aed, #3b82f6);
+  --shadow-btn: 0 4px 12px rgba(124, 58, 237, 0.3);
+  --shadow-btn-lg: 0 4px 20px rgba(124, 58, 237, 0.4);
+  --bg-sidebar: rgba(15, 10, 40, 0.7);
+  --bg-header: rgba(15, 10, 40, 0.5);
 }
 
 /* 全局背景 */
-html, body {
-  background: var(--bg-primary);
-  background-attachment: fixed;
-  min-height: 100vh;
-  color: var(--text-primary);
+@layer base {
+  html, body {
+    background: var(--bg-primary);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: var(--text-primary);
+  }
 }
 
-/* 毛玻璃卡片通用类 */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  box-shadow: var(--glow-primary);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+/* 毛玻璃卡片、光标动画 */
+@layer components {
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--glow-primary);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .glass-card:hover {
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glow-strong);
+  }
+
+  .cursor {
+    animation: var(--animate-blink);
+    color: var(--color-accent);
+  }
 }
 
-.glass-card:hover {
-  border-color: var(--glass-border-hover);
-  box-shadow: var(--glow-strong);
+/* 渐变文字工具类 */
+@utility gradient-text {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Ant Design 组件覆盖（无需 !important，未分层的样式优先级高于 @layer antd） */
@@ -64,22 +99,4 @@ html, body {
 
 .ant-table-wrapper .ant-table-tbody > tr:hover > td {
   background: rgba(139, 92, 246, 0.06);
-}
-
-/* 光标闪烁动画（ComparePage 用） */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.cursor {
-  animation: blink 1s step-end infinite;
-  color: var(--color-accent);
-}
-
-/* 渐变文字工具类 */
-.gradient-text {
-  background: linear-gradient(135deg, #a78bfa, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }

@@ -220,7 +220,7 @@ export default function ModelsPage() {
           type="primary"
           icon={<PlusOutlined />}
           onClick={openCreate}
-          className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+          className="bg-[var(--gradient-primary)] border-none shadow-[var(--shadow-btn)]"
         >
           添加模型
         </Button>

@@ -212,7 +212,7 @@ export default function BatchPage() {
               icon={<PlayCircleOutlined />}
               loading={loading}
               onClick={handleStart}
-              className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none shadow-[0_4px_12px_rgba(124,58,237,0.3)]"
+              className="bg-[var(--gradient-primary)] border-none shadow-[var(--shadow-btn)]"
             >
               开始测评
             </Button>

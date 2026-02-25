@@ -40,7 +40,7 @@ export default function LoginPage({ onLogin }: Props) {
       <div className="glass-card w-[380px] px-9 py-10">
         {/* 图标 + 标题 */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--gradient-primary)] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
             <ThunderboltOutlined className="text-2xl text-white" />
           </div>
           <h1 className="gradient-text text-[22px] font-bold m-0 leading-[1.3]">
@@ -82,7 +82,7 @@ export default function LoginPage({ onLogin }: Props) {
               loading={loading}
               block
               size="large"
-              className="bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] border-none rounded-lg font-semibold h-11 shadow-[0_4px_20px_rgba(124,58,237,0.4)]"
+              className="bg-[var(--gradient-primary)] border-none rounded-lg font-semibold h-11 shadow-[var(--shadow-btn-lg)]"
             >
               登录
             </Button>

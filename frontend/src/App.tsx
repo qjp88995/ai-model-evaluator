@@ -59,10 +59,10 @@ export default function App() {
       {/* 侧边栏 */}
       <Sider
         width={220}
-        className="bg-[rgba(15,10,40,0.7)] backdrop-blur-[20px] [border-right:1px_solid_rgba(139,92,246,0.15)] fixed h-screen z-[100] flex flex-col"
+        className="bg-[var(--bg-sidebar)] backdrop-blur-[20px] [border-right:1px_solid_var(--glass-border)] fixed h-screen z-[100] flex flex-col"
       >
         {/* Logo 区 */}
-        <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_rgba(139,92,246,0.15)] shrink-0">
+        <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_var(--glass-border)] shrink-0">
           <span className="gradient-text text-base font-bold tracking-[0.05em]">
             ⚡ 大模型评测
           </span>
@@ -79,7 +79,7 @@ export default function App() {
         />
 
         {/* 底部退出按钮 */}
-        <div className="p-4 [border-top:1px_solid_rgba(139,92,246,0.15)]">
+        <div className="p-4 [border-top:1px_solid_var(--glass-border)]">
           <Tooltip title="退出登录" placement="right">
             <Button
               icon={<LogoutOutlined />}
@@ -97,9 +97,9 @@ export default function App() {
       {/* 主内容区 */}
       <Layout className="ml-[220px] bg-transparent min-h-screen">
         {/* 顶部标题栏 */}
-        <div className="h-14 flex items-center px-6 bg-[rgba(15,10,40,0.5)] backdrop-blur-[12px] [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
+        <div className="h-14 flex items-center px-6 bg-[var(--bg-header)] backdrop-blur-[12px] [border-bottom:1px_solid_rgba(139,92,246,0.1)] sticky top-0 z-[99]">
           <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-slate-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-[linear-gradient(135deg,#7c3aed,#3b82f6)] shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--gradient-primary)] shadow-[0_0_8px_rgba(124,58,237,0.8)] inline-block" />
             {currentLabel}
           </span>
         </div>
