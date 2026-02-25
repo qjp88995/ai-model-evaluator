@@ -63,7 +63,7 @@ export default function App() {
       >
         {/* Logo 区 */}
         <div className="h-16 flex items-center justify-center [border-bottom:1px_solid_var(--glass-border)] shrink-0">
-          <span className="gradient-text text-base font-bold tracking-[0.05em]">
+          <span className="gradient-text text-base font-bold tracking-wider">
             ⚡ 大模型评测
           </span>
         </div>

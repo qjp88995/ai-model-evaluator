@@ -107,7 +107,7 @@ export default function StatsPage() {
           },
         ].map((item) => (
           <div key={item.title} className="glass-card px-5 py-4">
-            <div className="text-xs text-slate-400 mb-2 tracking-[0.05em]">
+            <div className="text-xs text-slate-400 mb-2 tracking-wider">
               {item.title}
             </div>
             <div
