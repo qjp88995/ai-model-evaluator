@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { Drawer, Tag } from 'antd';
 
-import { EvalResult, EvalSession, LlmModel } from '@/types';
 import { MarkdownRenderer } from './markdown';
+
+import { EvalResult, EvalSession, LlmModel } from '@/types';
 
 interface Props {
   session: EvalSession | null;

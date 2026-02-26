@@ -3,10 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { App, Button } from 'antd';
 
-import { modelsApi } from '@/services/api';
-import { LlmModel } from '@/types';
 import ModelCard from './ModelCard';
 import ModelFormModal from './ModelFormModal';
+
+import { modelsApi } from '@/services/api';
+import { LlmModel } from '@/types';
 
 export default function ModelsPage() {
   const { message } = App.useApp();
