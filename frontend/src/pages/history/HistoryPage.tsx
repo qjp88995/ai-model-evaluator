@@ -42,40 +42,48 @@ export default function HistoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [typeFilter]);
+  }, [typeFilter, message]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const handleViewDetail = useCallback(async (record: EvalSession) => {
-    setDetailLoadingId(record.id);
-    try {
-      const res = await evalApi.getSession(record.id);
-      setDetail(res.data);
-    } catch {
-      message.error('加载详情失败');
-    } finally {
-      setDetailLoadingId(null);
-    }
-  }, []);
+  const handleViewDetail = useCallback(
+    async (record: EvalSession) => {
+      setDetailLoadingId(record.id);
+      try {
+        const res = await evalApi.getSession(record.id);
+        setDetail(res.data);
+      } catch {
+        message.error('加载详情失败');
+      } finally {
+        setDetailLoadingId(null);
+      }
+    },
+    [message]
+  );
 
-  const handleExport = useCallback(async (id: string) => {
-    try {
-      const res = await evalApi.exportSession(id);
-      const blob = new Blob([JSON.stringify(res.data, null, 2)], {
-        type: 'application/json',
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `session-${id.slice(0, 8)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch {
-      message.error('导出失败');
-    }
-  }, []);
+  const handleExport = useCallback(
+    async (id: string) => {
+      try {
+        const res = await evalApi.exportSession(id);
+        const blob = new Blob([JSON.stringify(res.data, null, 2)], {
+          type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `session-${id.slice(0, 8)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch {
+        message.error('导出失败');
+      }
+    },
+    [message]
+  );
 
   const columns = useMemo(
     () => [

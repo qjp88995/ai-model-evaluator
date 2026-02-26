@@ -94,34 +94,34 @@ export default function StatsPage() {
       {
         title: '总请求数',
         value: overview?.totalRequests ?? 0,
-        color: '#a78bfa',
+        colorClass: 'text-violet-400',
       },
       {
         title: '输入 Token',
         value: overview?.totalTokensInput ?? 0,
-        color: '#60a5fa',
+        colorClass: 'text-blue-400',
       },
       {
         title: '输出 Token',
         value: overview?.totalTokensOutput ?? 0,
-        color: '#34d399',
+        colorClass: 'text-emerald-400',
       },
       {
         title: '总 Token',
         value:
           (overview?.totalTokensInput ?? 0) +
           (overview?.totalTokensOutput ?? 0),
-        color: '#fbbf24',
+        colorClass: 'text-amber-400',
       },
       {
         title: '活跃模型',
         value: overview?.activeModels ?? 0,
-        color: '#f472b6',
+        colorClass: 'text-pink-400',
       },
       {
         title: '评测会话',
         value: overview?.totalSessions ?? 0,
-        color: '#a78bfa',
+        colorClass: 'text-violet-400',
       },
     ],
     [overview]
@@ -136,10 +136,7 @@ export default function StatsPage() {
             <div className="text-xs text-slate-400 mb-2 tracking-wider">
               {item.title}
             </div>
-            <div
-              className="text-[22px] font-bold"
-              style={{ color: item.color }}
-            >
+            <div className={`text-[22px] font-bold ${item.colorClass}`}>
               {loading ? '—' : item.value.toLocaleString()}
             </div>
           </div>
