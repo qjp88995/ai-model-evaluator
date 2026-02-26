@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import {
   DeleteOutlined,
@@ -46,8 +46,8 @@ export default function CasesDrawer({
   if (!testSet) return null;
 
   const handleSaveCase = async () => {
-    const values = await caseForm.validateFields();
     try {
+      const values = await caseForm.validateFields();
       if (editingCase) {
         await testsetsApi.updateCase(testSet.id, editingCase.id, values);
       } else {
@@ -56,87 +56,99 @@ export default function CasesDrawer({
       message.success("保存成功");
       setCaseModalOpen(false);
       onUpdated(testSet.id);
-    } catch {
-      message.error("操作失败");
+    } catch (err: unknown) {
+      if (!(err instanceof Object && "errorFields" in err)) {
+        message.error("操作失败");
+      }
     }
   };
 
-  const handleDeleteCase = async (caseId: string) => {
-    try {
-      await testsetsApi.deleteCase(testSet.id, caseId);
-      message.success("删除成功");
-      onUpdated(testSet.id);
-    } catch {
-      message.error("删除失败");
-    }
-  };
-
-  const handleImportCSV = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const text = e.target?.result as string;
-      const lines = text.split("\n").filter(Boolean);
-      const cases = lines
-        .slice(1)
-        .map((line) => {
-          const cols = line.split(",");
-          return {
-            prompt: cols[0]?.trim().replace(/^"|"$/g, ""),
-            referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ""),
-            scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ""),
-          };
-        })
-        .filter((c) => c.prompt);
+  const handleDeleteCase = useCallback(
+    async (caseId: string) => {
       try {
-        await testsetsApi.importCases(testSet.id, cases);
-        message.success(`导入 ${cases.length} 条用例`);
+        await testsetsApi.deleteCase(testSet.id, caseId);
+        message.success("删除成功");
         onUpdated(testSet.id);
       } catch {
-        message.error("导入失败");
+        message.error("删除失败");
       }
-    };
-    reader.readAsText(file);
-    return false;
-  };
+    },
+    [testSet.id, onUpdated],
+  );
 
-  const caseColumns = [
-    { title: "Prompt", dataIndex: "prompt", key: "prompt", ellipsis: true },
-    {
-      title: "参考答案",
-      dataIndex: "referenceAnswer",
-      key: "referenceAnswer",
-      ellipsis: true,
+  const handleImportCSV = useCallback(
+    (file: File) => {
+      const reader = new FileReader();
+      reader.onerror = () => message.error("文件读取失败");
+      reader.onload = async (e) => {
+        const text = e.target?.result as string;
+        const lines = text.split("\n").filter(Boolean);
+        const cases = lines
+          .slice(1)
+          .map((line) => {
+            const cols = line.split(",");
+            return {
+              prompt: cols[0]?.trim().replace(/^"|"$/g, ""),
+              referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ""),
+              scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ""),
+            };
+          })
+          .filter((c) => c.prompt);
+        try {
+          await testsetsApi.importCases(testSet.id, cases);
+          message.success(`导入 ${cases.length} 条用例`);
+          onUpdated(testSet.id);
+        } catch {
+          message.error("导入失败");
+        }
+      };
+      reader.readAsText(file);
+      return false;
     },
-    {
-      title: "评分标准",
-      dataIndex: "scoringCriteria",
-      key: "scoringCriteria",
-      ellipsis: true,
-    },
-    {
-      title: "操作",
-      key: "actions",
-      render: (_: unknown, record: TestCase) => (
-        <Space>
-          <Button
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setEditingCase(record);
-              caseForm.setFieldsValue(record);
-              setCaseModalOpen(true);
-            }}
-          />
-          <Popconfirm
-            title="确认删除?"
-            onConfirm={() => handleDeleteCase(record.id)}
-          >
-            <Button size="small" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+    [testSet.id, onUpdated],
+  );
+
+  const caseColumns = useMemo(
+    () => [
+      { title: "Prompt", dataIndex: "prompt", key: "prompt", ellipsis: true },
+      {
+        title: "参考答案",
+        dataIndex: "referenceAnswer",
+        key: "referenceAnswer",
+        ellipsis: true,
+      },
+      {
+        title: "评分标准",
+        dataIndex: "scoringCriteria",
+        key: "scoringCriteria",
+        ellipsis: true,
+      },
+      {
+        title: "操作",
+        key: "actions",
+        render: (_: unknown, record: TestCase) => (
+          <Space>
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setEditingCase(record);
+                caseForm.setFieldsValue(record);
+                setCaseModalOpen(true);
+              }}
+            />
+            <Popconfirm
+              title="确认删除?"
+              onConfirm={() => handleDeleteCase(record.id)}
+            >
+              <Button size="small" danger icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </Space>
+        ),
+      },
+    ],
+    [handleDeleteCase, caseForm],
+  );
 
   return (
     <>
@@ -145,6 +157,7 @@ export default function CasesDrawer({
         open={open}
         onClose={onClose}
         size="large"
+        destroyOnHidden
         extra={
           <Space>
             <Upload
