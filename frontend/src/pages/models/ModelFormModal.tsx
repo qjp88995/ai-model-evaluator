@@ -1,4 +1,4 @@
-import { Form, Input, InputNumber, message,Modal, Select, Switch } from "antd";
+import { Form, Input, InputNumber, message, Modal, Select, Switch } from "antd";
 
 import { modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
@@ -57,9 +57,9 @@ export default function ModelFormModal({
   };
 
   const handleSave = async () => {
-    const values = await form.validateFields();
-    if (editing && !values.apiKey) delete values.apiKey;
     try {
+      const values = await form.validateFields();
+      if (editing && !values.apiKey) delete values.apiKey;
       if (editing) {
         await modelsApi.update(editing.id, values);
         message.success("更新成功");
@@ -69,7 +69,10 @@ export default function ModelFormModal({
       }
       onSuccess();
     } catch (err: any) {
-      message.error(err.response?.data?.message ?? "操作失败");
+      // validateFields 校验失败时 err.errorFields 存在，antd 已显示字段错误，无需额外提示
+      if (!err?.errorFields) {
+        message.error(err.response?.data?.message ?? "操作失败");
+      }
     }
   };
 
@@ -97,9 +100,7 @@ export default function ModelFormModal({
           <Select
             options={PROVIDERS}
             onChange={(v) => {
-              if (PROVIDER_DEFAULT_URLS[v]) {
-                form.setFieldValue("baseUrl", PROVIDER_DEFAULT_URLS[v]);
-              }
+              form.setFieldValue("baseUrl", PROVIDER_DEFAULT_URLS[v] ?? "");
             }}
           />
         </Form.Item>
