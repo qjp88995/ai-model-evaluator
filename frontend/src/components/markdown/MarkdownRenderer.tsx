@@ -1,12 +1,12 @@
-import { useMemo } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
+import { useMemo } from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
 
-import rehypeHighlight from "rehype-highlight";
-import rehypeKatex from "rehype-katex";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
+import rehypeHighlight from 'rehype-highlight';
+import rehypeKatex from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
-import CodeBlock from "./CodeBlock";
+import CodeBlock from './CodeBlock';
 
 // ── 流式预处理 ──────────────────────────────────────────────────────────────
 // 在流式输出时，代码块或 LaTeX 块可能尚未闭合，导致 remark 将其降级为普通段落，
@@ -17,20 +17,20 @@ function normalizeForStreaming(content: string): string {
   // 补全未闭合的代码块（``` 出现奇数次）
   const fences = result.match(/```/g) ?? [];
   if (fences.length % 2 !== 0) {
-    result += "\n```";
+    result += '\n```';
   }
 
   // 补全未闭合的 LaTeX 块（$$）
   const blockMathCount = (result.match(/\$\$/g) ?? []).length;
   if (blockMathCount % 2 !== 0) {
-    result += "$$";
+    result += '$$';
   } else {
     // $$ 已偶数（或不存在），检查行内 $ 是否未闭合
     // 移除 $$ 后再统计单独的 $ 数量，避免重复计数
-    const stripped = result.replace(/\$\$/g, "");
+    const stripped = result.replace(/\$\$/g, '');
     const inlineMathCount = (stripped.match(/\$/g) ?? []).length;
     if (inlineMathCount % 2 !== 0) {
-      result += "$";
+      result += '$';
     }
   }
 
@@ -49,7 +49,7 @@ const components: Components = {
   },
   // 代码：区分块级（有 language-xxx class）和行内
   code({ className, children, ...props }) {
-    const match = /language-(\w+)/.exec(className ?? "");
+    const match = /language-(\w+)/.exec(className ?? '');
     if (match) {
       return (
         <CodeBlock language={match[1]} className={className}>
@@ -86,11 +86,11 @@ export default function MarkdownRenderer({
 }: MarkdownRendererProps) {
   const processedContent = useMemo(
     () => (streaming ? normalizeForStreaming(content) : content),
-    [content, streaming],
+    [content, streaming]
   );
 
   return (
-    <div className={`markdown-body text-sm text-slate-200 ${className ?? ""}`}>
+    <div className={`markdown-body text-sm text-slate-200 ${className ?? ''}`}>
       <ReactMarkdown
         remarkPlugins={remarkPlugins}
         rehypePlugins={rehypePlugins}

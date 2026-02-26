@@ -1,24 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
-import { LockOutlined, ThunderboltOutlined, UserOutlined } from "@ant-design/icons";
-import { App, Button, Form, Input } from "antd";
+import {
+  LockOutlined,
+  ThunderboltOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { App, Button, Form, Input } from 'antd';
 
-import { authApi } from "@/services/api";
+import { authApi } from '@/services/api';
 
 export default function LoginPage() {
   const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: { username: string; password: string }) => {
+  const handleSubmit = async (values: {
+    username: string;
+    password: string;
+  }) => {
     setLoading(true);
     try {
       const res = await authApi.login(values.username, values.password);
-      localStorage.setItem("token", res.data.access_token);
-      navigate("/models");
+      localStorage.setItem('token', res.data.access_token);
+      navigate('/models');
     } catch {
-      message.error("用户名或密码错误");
+      message.error('用户名或密码错误');
     } finally {
       setLoading(false);
     }
@@ -37,13 +44,20 @@ export default function LoginPage() {
           <div className="w-14 h-14 rounded-2xl bg-(--gradient-primary) flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(124,58,237,0.4)]">
             <ThunderboltOutlined className="text-2xl text-white" />
           </div>
-          <h1 className="gradient-text text-[22px] font-bold m-0 leading-[1.3]">大模型评测平台</h1>
-          <p className="text-slate-400 text-[13px] m-0 mt-1.5">AI Model Evaluation System</p>
+          <h1 className="gradient-text text-[22px] font-bold m-0 leading-[1.3]">
+            大模型评测平台
+          </h1>
+          <p className="text-slate-400 text-[13px] m-0 mt-1.5">
+            AI Model Evaluation System
+          </p>
         </div>
 
         {/* 表单 */}
         <Form onFinish={handleSubmit} autoComplete="off">
-          <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: '请输入用户名' }]}
+          >
             <Input
               prefix={<UserOutlined className="text-slate-400" />}
               placeholder="用户名"
@@ -51,7 +65,10 @@ export default function LoginPage() {
               className="bg-white/6 border border-violet-500/25 rounded-lg"
             />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: '请输入密码' }]}
+          >
             <Input.Password
               prefix={<LockOutlined className="text-slate-400" />}
               placeholder="密码"

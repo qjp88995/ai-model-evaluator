@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { App, Form, Input, Modal } from "antd";
+import { App, Form, Input, Modal } from 'antd';
 
-import { testsetsApi } from "@/services/api";
-import { TestSet } from "@/types";
+import { testsetsApi } from '@/services/api';
+import { TestSet } from '@/types';
 
 interface Props {
   open: boolean;
@@ -12,7 +12,12 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function TestSetFormModal({ open, editing, onSuccess, onCancel }: Props) {
+export default function TestSetFormModal({
+  open,
+  editing,
+  onSuccess,
+  onCancel,
+}: Props) {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
@@ -23,15 +28,15 @@ export default function TestSetFormModal({ open, editing, onSuccess, onCancel }:
       const values = await form.validateFields();
       if (editing) {
         await testsetsApi.update(editing.id, values);
-        message.success("更新成功");
+        message.success('更新成功');
       } else {
         await testsetsApi.create(values);
-        message.success("创建成功");
+        message.success('创建成功');
       }
       onSuccess();
     } catch (err: unknown) {
-      if (!(err instanceof Object && "errorFields" in err)) {
-        message.error("操作失败");
+      if (!(err instanceof Object && 'errorFields' in err)) {
+        message.error('操作失败');
       }
     } finally {
       setSaving(false);
@@ -40,15 +45,15 @@ export default function TestSetFormModal({ open, editing, onSuccess, onCancel }:
 
   return (
     <Modal
-      title={editing ? "编辑测评集" : "新建测评集"}
+      title={editing ? '编辑测评集' : '新建测评集'}
       open={open}
       onOk={handleSave}
       onCancel={onCancel}
-      okText={editing ? "保存" : "新建"}
+      okText={editing ? '保存' : '新建'}
       cancelText="取消"
       confirmLoading={saving}
       destroyOnHidden
-      afterOpenChange={(visible) => {
+      afterOpenChange={visible => {
         if (visible) {
           if (editing) {
             form.setFieldsValue(editing);

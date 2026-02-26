@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { App, Button, Select, Space, Table, Tag } from "antd";
-import dayjs from "dayjs";
+import { App, Button, Select, Space, Table, Tag } from 'antd';
+import dayjs from 'dayjs';
 
-import EvalResultDrawer from "@/components/EvalResultDrawer";
-import { evalApi, modelsApi } from "@/services/api";
-import { EvalSession, LlmModel } from "@/types";
+import EvalResultDrawer from '@/components/EvalResultDrawer';
+import { evalApi, modelsApi } from '@/services/api';
+import { EvalSession, LlmModel } from '@/types';
 
 const statusColor: Record<string, string> = {
-  pending: "default",
-  running: "processing",
-  completed: "success",
-  failed: "error",
+  pending: 'default',
+  running: 'processing',
+  completed: 'success',
+  failed: 'error',
 };
 
 export default function HistoryPage() {
@@ -43,10 +43,10 @@ export default function HistoryPage() {
   const handleExport = async (id: string) => {
     const res = await evalApi.exportSession(id);
     const blob = new Blob([JSON.stringify(res.data, null, 2)], {
-      type: "application/json",
+      type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `session-${id.slice(0, 8)}.json`;
     a.click();
@@ -55,49 +55,51 @@ export default function HistoryPage() {
 
   const columns = [
     {
-      title: "类型",
-      dataIndex: "type",
-      key: "type",
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
       width: 80,
       render: (v: string) => (
-        <Tag color={v === "compare" ? "blue" : "purple"}>{v === "compare" ? "对比" : "批量"}</Tag>
+        <Tag color={v === 'compare' ? 'blue' : 'purple'}>
+          {v === 'compare' ? '对比' : '批量'}
+        </Tag>
       ),
     },
     {
-      title: "名称/ID",
-      key: "name",
+      title: '名称/ID',
+      key: 'name',
       render: (_: any, r: EvalSession) => r.name || r.id.slice(0, 8),
     },
     {
-      title: "状态",
-      dataIndex: "status",
-      key: "status",
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
       width: 100,
       render: (v: string) => <Tag color={statusColor[v]}>{v}</Tag>,
     },
     {
-      title: "结果数",
-      key: "count",
+      title: '结果数',
+      key: 'count',
       width: 80,
-      render: (_: any, r: EvalSession) => r._count?.results ?? "-",
+      render: (_: any, r: EvalSession) => r._count?.results ?? '-',
     },
     {
-      title: "创建时间",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       width: 150,
-      render: (v: string) => dayjs(v).format("YYYY-MM-DD HH:mm"),
+      render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm'),
     },
     {
-      title: "完成时间",
-      dataIndex: "completedAt",
-      key: "completedAt",
+      title: '完成时间',
+      dataIndex: 'completedAt',
+      key: 'completedAt',
       width: 150,
-      render: (v?: string) => (v ? dayjs(v).format("YYYY-MM-DD HH:mm") : "-"),
+      render: (v?: string) => (v ? dayjs(v).format('YYYY-MM-DD HH:mm') : '-'),
     },
     {
-      title: "操作",
-      key: "actions",
+      title: '操作',
+      key: 'actions',
       width: 160,
       render: (_: any, record: EvalSession) => (
         <Space>
@@ -108,7 +110,7 @@ export default function HistoryPage() {
                 const res = await evalApi.getSession(record.id);
                 setDetail(res.data);
               } catch {
-                message.error("加载详情失败");
+                message.error('加载详情失败');
               }
             }}
           >
@@ -131,8 +133,8 @@ export default function HistoryPage() {
           value={typeFilter}
           onChange={setTypeFilter}
           options={[
-            { value: "compare", label: "实时对比" },
-            { value: "batch", label: "批量测评" },
+            { value: 'compare', label: '实时对比' },
+            { value: 'batch', label: '批量测评' },
           ]}
           className="w-40"
         />
@@ -147,7 +149,11 @@ export default function HistoryPage() {
         pagination={{ pageSize: 10 }}
       />
 
-      <EvalResultDrawer session={detail} models={models} onClose={() => setDetail(null)} />
+      <EvalResultDrawer
+        session={detail}
+        models={models}
+        onClose={() => setDetail(null)}
+      />
     </div>
   );
 }

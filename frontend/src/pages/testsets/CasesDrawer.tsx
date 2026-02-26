@@ -1,6 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from 'react';
 
-import { DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import {
   App,
   Button,
@@ -13,10 +18,10 @@ import {
   Table,
   Typography,
   Upload,
-} from "antd";
+} from 'antd';
 
-import { testsetsApi } from "@/services/api";
-import { TestCase, TestSet } from "@/types";
+import { testsetsApi } from '@/services/api';
+import { TestCase, TestSet } from '@/types';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -28,7 +33,12 @@ interface Props {
   onUpdated: (id: string) => void;
 }
 
-export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props) {
+export default function CasesDrawer({
+  testSet,
+  open,
+  onClose,
+  onUpdated,
+}: Props) {
   const { message } = App.useApp();
   const [caseModalOpen, setCaseModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<TestCase | null>(null);
@@ -41,10 +51,10 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
       if (!testSet) return;
       try {
         await testsetsApi.deleteCase(testSet.id, caseId);
-        message.success("删除成功");
+        message.success('删除成功');
         onUpdated(testSet.id);
       } catch {
-        message.error("删除失败");
+        message.error('删除失败');
       }
     },
     [testSet, onUpdated]
@@ -54,27 +64,27 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
     (file: File) => {
       if (!testSet) return false;
       const reader = new FileReader();
-      reader.onerror = () => message.error("文件读取失败");
-      reader.onload = async (e) => {
+      reader.onerror = () => message.error('文件读取失败');
+      reader.onload = async e => {
         const text = e.target?.result as string;
-        const lines = text.split("\n").filter(Boolean);
+        const lines = text.split('\n').filter(Boolean);
         const cases = lines
           .slice(1)
-          .map((line) => {
-            const cols = line.split(",");
+          .map(line => {
+            const cols = line.split(',');
             return {
-              prompt: cols[0]?.trim().replace(/^"|"$/g, ""),
-              referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ""),
-              scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ""),
+              prompt: cols[0]?.trim().replace(/^"|"$/g, ''),
+              referenceAnswer: cols[1]?.trim().replace(/^"|"$/g, ''),
+              scoringCriteria: cols[2]?.trim().replace(/^"|"$/g, ''),
             };
           })
-          .filter((c) => c.prompt);
+          .filter(c => c.prompt);
         try {
           await testsetsApi.importCases(testSet.id, cases);
           message.success(`导入 ${cases.length} 条用例`);
           onUpdated(testSet.id);
         } catch {
-          message.error("导入失败");
+          message.error('导入失败');
         }
       };
       reader.readAsText(file);
@@ -85,22 +95,22 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
 
   const caseColumns = useMemo(
     () => [
-      { title: "Prompt", dataIndex: "prompt", key: "prompt", ellipsis: true },
+      { title: 'Prompt', dataIndex: 'prompt', key: 'prompt', ellipsis: true },
       {
-        title: "参考答案",
-        dataIndex: "referenceAnswer",
-        key: "referenceAnswer",
+        title: '参考答案',
+        dataIndex: 'referenceAnswer',
+        key: 'referenceAnswer',
         ellipsis: true,
       },
       {
-        title: "评分标准",
-        dataIndex: "scoringCriteria",
-        key: "scoringCriteria",
+        title: '评分标准',
+        dataIndex: 'scoringCriteria',
+        key: 'scoringCriteria',
         ellipsis: true,
       },
       {
-        title: "操作",
-        key: "actions",
+        title: '操作',
+        key: 'actions',
         width: 120,
         render: (_: unknown, record: TestCase) => (
           <Space>
@@ -113,7 +123,10 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
                 setCaseModalOpen(true);
               }}
             />
-            <Popconfirm title="确认删除?" onConfirm={() => handleDeleteCase(record.id)}>
+            <Popconfirm
+              title="确认删除?"
+              onConfirm={() => handleDeleteCase(record.id)}
+            >
               <Button size="small" danger icon={<DeleteOutlined />} />
             </Popconfirm>
           </Space>
@@ -134,12 +147,12 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
       } else {
         await testsetsApi.addCase(testSet.id, values);
       }
-      message.success("保存成功");
+      message.success('保存成功');
       setCaseModalOpen(false);
       onUpdated(testSet.id);
     } catch (err: unknown) {
-      if (!(err instanceof Object && "errorFields" in err)) {
-        message.error("操作失败");
+      if (!(err instanceof Object && 'errorFields' in err)) {
+        message.error('操作失败');
       }
     } finally {
       setSavingCase(false);
@@ -155,11 +168,15 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
         size="large"
         destroyOnHidden
         styles={{
-          wrapper: { width: "75%" },
+          wrapper: { width: '75%' },
         }}
         extra={
           <Space>
-            <Upload accept=".csv" beforeUpload={handleImportCSV} showUploadList={false}>
+            <Upload
+              accept=".csv"
+              beforeUpload={handleImportCSV}
+              showUploadList={false}
+            >
               <Button icon={<UploadOutlined />}>导入 CSV</Button>
             </Upload>
             <Button
@@ -178,7 +195,8 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
         }
       >
         <Text type="secondary" className="block mb-2">
-          CSV 格式：prompt,referenceAnswer,scoringCriteria（第一行为表头，字段值内不可含逗号）
+          CSV
+          格式：prompt,referenceAnswer,scoringCriteria（第一行为表头，字段值内不可含逗号）
         </Text>
         <Table
           rowKey="id"
@@ -190,7 +208,7 @@ export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props
       </Drawer>
 
       <Modal
-        title={editingCase ? "编辑用例" : "添加用例"}
+        title={editingCase ? '编辑用例' : '添加用例'}
         open={caseModalOpen}
         onOk={handleSaveCase}
         onCancel={() => setCaseModalOpen(false)}

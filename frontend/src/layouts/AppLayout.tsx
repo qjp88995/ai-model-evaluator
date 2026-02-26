@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import {
   BarChartOutlined,
@@ -8,16 +8,16 @@ import {
   OrderedListOutlined,
   RobotOutlined,
   SettingOutlined,
-} from "@ant-design/icons";
-import { Button, Menu, Tooltip } from "antd";
+} from '@ant-design/icons';
+import { Button, Menu, Tooltip } from 'antd';
 
 const menuItems = [
-  { key: "models", icon: <SettingOutlined />, label: "模型管理" },
-  { key: "compare", icon: <RobotOutlined />, label: "实时对比" },
-  { key: "batch", icon: <ExperimentOutlined />, label: "批量测评" },
-  { key: "testsets", icon: <OrderedListOutlined />, label: "测评集管理" },
-  { key: "history", icon: <HistoryOutlined />, label: "历史记录" },
-  { key: "stats", icon: <BarChartOutlined />, label: "用量统计" },
+  { key: 'models', icon: <SettingOutlined />, label: '模型管理' },
+  { key: 'compare', icon: <RobotOutlined />, label: '实时对比' },
+  { key: 'batch', icon: <ExperimentOutlined />, label: '批量测评' },
+  { key: 'testsets', icon: <OrderedListOutlined />, label: '测评集管理' },
+  { key: 'history', icon: <HistoryOutlined />, label: '历史记录' },
+  { key: 'stats', icon: <BarChartOutlined />, label: '用量统计' },
 ];
 
 export default function AppLayout() {
@@ -25,14 +25,14 @@ export default function AppLayout() {
   const location = useLocation();
 
   // 从路径中提取当前页面 key，如 "/models" → "models"
-  const current = location.pathname.replace(/^\//, "") || "models";
+  const current = location.pathname.replace(/^\//, '') || 'models';
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
-  const currentLabel = menuItems.find((m) => m.key === current)?.label;
+  const currentLabel = menuItems.find(m => m.key === current)?.label;
 
   return (
     <div className="flex h-screen overflow-hidden">

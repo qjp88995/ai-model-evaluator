@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 import {
   ClearOutlined,
@@ -7,7 +7,7 @@ import {
   DownOutlined,
   SendOutlined,
   UpOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -20,11 +20,11 @@ import {
   Tag,
   Tooltip,
   Typography,
-} from "antd";
+} from 'antd';
 
-import { MarkdownRenderer } from "@/components/markdown";
-import { evalApi, modelsApi } from "@/services/api";
-import { LlmModel } from "@/types";
+import { MarkdownRenderer } from '@/components/markdown';
+import { evalApi, modelsApi } from '@/services/api';
+import { LlmModel } from '@/types';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -50,8 +50,8 @@ function getColSpan(total: number): number {
 export default function ComparePage() {
   const [models, setModels] = useState<LlmModel[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState("");
-  const [systemPrompt, setSystemPrompt] = useState("");
+  const [prompt, setPrompt] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState('');
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   const [running, setRunning] = useState(false);
   const [modelStates, setModelStates] = useState<ModelState[]>([]);
@@ -60,12 +60,14 @@ export default function ComparePage() {
   const contentRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
-    modelsApi.list().then((res) => setModels(res.data.filter((m: LlmModel) => m.isActive)));
+    modelsApi
+      .list()
+      .then(res => setModels(res.data.filter((m: LlmModel) => m.isActive)));
   }, []);
 
   // 流式输出时自动滚到底部
   useEffect(() => {
-    modelStates.forEach((s) => {
+    modelStates.forEach(s => {
       if (!s.done) {
         const el = contentRefsRef.current.get(s.id);
         if (el) el.scrollTop = el.scrollHeight;
@@ -74,15 +76,15 @@ export default function ComparePage() {
   }, [modelStates]);
 
   const handleRun = async () => {
-    if (!prompt.trim()) return message.warning("请输入 Prompt");
-    if (selectedIds.length === 0) return message.warning("请选择至少一个模型");
+    if (!prompt.trim()) return message.warning('请输入 Prompt');
+    if (selectedIds.length === 0) return message.warning('请选择至少一个模型');
 
     setRunning(true);
     setSessionId(null);
-    const initialStates = selectedIds.map((id) => ({
+    const initialStates = selectedIds.map(id => ({
       id,
-      name: models.find((m) => m.id === id)?.name ?? id,
-      content: "",
+      name: models.find(m => m.id === id)?.name ?? id,
+      content: '',
       done: false,
     }));
     setModelStates(initialStates);
@@ -97,23 +99,23 @@ export default function ComparePage() {
       setSessionId(sid);
 
       // 关闭上一次残留的连接
-      eventSourcesRef.current.forEach((es) => es.close());
+      eventSourcesRef.current.forEach(es => es.close());
       eventSourcesRef.current = [];
 
       let doneCount = 0;
       const total = selectedIds.length;
 
-      selectedIds.forEach((modelId) => {
-        const token = localStorage.getItem("token") ?? "";
+      selectedIds.forEach(modelId => {
+        const token = localStorage.getItem('token') ?? '';
         const es = new EventSource(
           `/api/eval/compare/${sid}/stream/${modelId}?token=${encodeURIComponent(token)}`
         );
         eventSourcesRef.current.push(es);
 
-        es.onmessage = (event) => {
+        es.onmessage = event => {
           const data = JSON.parse(event.data);
-          setModelStates((prev) =>
-            prev.map((s) => {
+          setModelStates(prev =>
+            prev.map(s => {
               if (s.id !== modelId) return s;
               if (data.done) {
                 return {
@@ -125,7 +127,7 @@ export default function ComparePage() {
                   error: data.error,
                 };
               }
-              return { ...s, content: s.content + (data.chunk ?? "") };
+              return { ...s, content: s.content + (data.chunk ?? '') };
             })
           );
 
@@ -140,9 +142,11 @@ export default function ComparePage() {
 
         es.onerror = () => {
           es.close();
-          setModelStates((prev) =>
-            prev.map((s) =>
-              s.id === modelId && !s.done ? { ...s, done: true, error: "连接中断" } : s
+          setModelStates(prev =>
+            prev.map(s =>
+              s.id === modelId && !s.done
+                ? { ...s, done: true, error: '连接中断' }
+                : s
             )
           );
           doneCount += 1;
@@ -152,13 +156,13 @@ export default function ComparePage() {
         };
       });
     } catch (err: any) {
-      message.error(err.response?.data?.message ?? "启动失败");
+      message.error(err.response?.data?.message ?? '启动失败');
       setRunning(false);
     }
   };
 
   const handleClear = () => {
-    eventSourcesRef.current.forEach((es) => es.close());
+    eventSourcesRef.current.forEach(es => es.close());
     eventSourcesRef.current = [];
     setModelStates([]);
     setSessionId(null);
@@ -169,10 +173,10 @@ export default function ComparePage() {
     navigator.clipboard
       .writeText(content)
       .then(() => {
-        void message.success("已复制");
+        void message.success('已复制');
       })
       .catch(() => {
-        void message.error("复制失败，请手动复制");
+        void message.error('复制失败，请手动复制');
       });
   };
 
@@ -181,26 +185,27 @@ export default function ComparePage() {
     try {
       const res = await evalApi.exportSession(sessionId);
       const blob = new Blob([JSON.stringify(res.data, null, 2)], {
-        type: "application/json",
+        type: 'application/json',
       });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = `compare-${sessionId}.json`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      message.error("导出失败");
+      message.error('导出失败');
     }
   };
 
-  const modelOptions = models.map((m) => ({
+  const modelOptions = models.map(m => ({
     value: m.id,
     label: `${m.name} (${m.modelId})`,
   }));
 
   const colSpan = getColSpan(modelStates.length);
-  const allDone = modelStates.length > 0 && modelStates.every((s) => s.done) && !running;
+  const allDone =
+    modelStates.length > 0 && modelStates.every(s => s.done) && !running;
 
   return (
     <div>
@@ -219,7 +224,7 @@ export default function ComparePage() {
           <div>
             <button
               type="button"
-              onClick={() => setShowSystemPrompt((v) => !v)}
+              onClick={() => setShowSystemPrompt(v => !v)}
               className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors mb-2 cursor-pointer bg-transparent border-0 p-0"
             >
               {showSystemPrompt ? <UpOutlined /> : <DownOutlined />}
@@ -232,7 +237,7 @@ export default function ComparePage() {
               <TextArea
                 placeholder="输入系统提示词..."
                 value={systemPrompt}
-                onChange={(e) => setSystemPrompt(e.target.value)}
+                onChange={e => setSystemPrompt(e.target.value)}
                 rows={2}
                 className="resize-none"
               />
@@ -241,12 +246,16 @@ export default function ComparePage() {
           <TextArea
             placeholder="输入 Prompt，所有模型同时响应..."
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={e => setPrompt(e.target.value)}
             rows={4}
             className="resize-none"
           />
           <div className="flex gap-2 justify-end">
-            <Button icon={<ClearOutlined />} onClick={handleClear} disabled={running}>
+            <Button
+              icon={<ClearOutlined />}
+              onClick={handleClear}
+              disabled={running}
+            >
               清除
             </Button>
             <Button
@@ -273,8 +282,8 @@ export default function ComparePage() {
       {modelStates.length > 0 && (
         <>
           <Row gutter={[16, 16]}>
-            {modelStates.map((state) => {
-              const model = models.find((m) => m.id === state.id);
+            {modelStates.map(state => {
+              const model = models.find(m => m.id === state.id);
               return (
                 <Col key={state.id} xs={24} sm={24} md={colSpan}>
                   <div className="glass-card px-5 py-4 flex flex-col min-h-60">
@@ -282,7 +291,9 @@ export default function ComparePage() {
                     <div className="flex justify-between items-start mb-3 shrink-0">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-200">{state.name}</span>
+                          <span className="font-semibold text-slate-200">
+                            {state.name}
+                          </span>
                           {state.done ? (
                             state.error ? (
                               <Tag color="red">失败</Tag>
@@ -323,17 +334,20 @@ export default function ComparePage() {
                     </div>
                     {/* 内容区：限制最大高度，流式时自动滚底 */}
                     <div
-                      ref={(el) => {
+                      ref={el => {
                         if (el) contentRefsRef.current.set(state.id, el);
                         else contentRefsRef.current.delete(state.id);
                       }}
                       className="overflow-y-auto flex-1"
-                      style={{ maxHeight: "60vh" }}
+                      style={{ maxHeight: '60vh' }}
                     >
                       {state.error ? (
                         <Text type="danger">{state.error}</Text>
                       ) : (
-                        <MarkdownRenderer content={state.content} streaming={!state.done} />
+                        <MarkdownRenderer
+                          content={state.content}
+                          streaming={!state.done}
+                        />
                       )}
                     </div>
                   </div>

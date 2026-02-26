@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
-import { App, Button } from "antd";
+import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
+import { App, Button } from 'antd';
 
 // 从高亮后的 React 节点树中递归提取纯文本（用于复制功能）
 function extractText(node: React.ReactNode): string {
-  if (typeof node === "string") return node;
-  if (typeof node === "number") return String(node);
-  if (Array.isArray(node)) return node.map(extractText).join("");
-  if (node !== null && typeof node === "object" && "props" in node) {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (node !== null && typeof node === 'object' && 'props' in node) {
     return extractText(
       (node as React.ReactElement<{ children?: React.ReactNode }>).props
-        .children,
+        .children
     );
   }
-  return "";
+  return '';
 }
 
 interface CodeBlockProps {
@@ -44,12 +44,12 @@ export default function CodeBlock({
       .writeText(text)
       .then(() => {
         setCopied(true);
-        void message.success("已复制");
+        void message.success('已复制');
         if (timerRef.current !== null) clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => setCopied(false), 2000);
       })
       .catch(() => {
-        void message.error("复制失败，请手动复制");
+        void message.error('复制失败，请手动复制');
       });
   };
 
@@ -58,7 +58,7 @@ export default function CodeBlock({
       {/* 顶栏：语言标签 + 复制按钮 */}
       <div className="flex items-center justify-between px-4 py-1.5 bg-white/3 border-b border-(--glass-border)">
         <span className="text-xs text-slate-400 font-mono select-none">
-          {language || "text"}
+          {language || 'text'}
         </span>
         <Button
           type="text"

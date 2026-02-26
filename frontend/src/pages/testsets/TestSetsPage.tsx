@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { App, Button } from "antd";
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { App, Button } from 'antd';
 
-import { testsetsApi } from "@/services/api";
-import { TestSet } from "@/types";
-import CasesDrawer from "./CasesDrawer";
-import TestSetCard from "./TestSetCard";
-import TestSetFormModal from "./TestSetFormModal";
+import { testsetsApi } from '@/services/api';
+import { TestSet } from '@/types';
+import CasesDrawer from './CasesDrawer';
+import TestSetCard from './TestSetCard';
+import TestSetFormModal from './TestSetFormModal';
 
 export default function TestSetsPage() {
   const { message } = App.useApp();
@@ -22,7 +22,7 @@ export default function TestSetsPage() {
       const res = await testsetsApi.list();
       setSets(res.data);
     } catch {
-      message.error("测评集列表加载失败");
+      message.error('测评集列表加载失败');
     }
   }, []);
 
@@ -40,7 +40,7 @@ export default function TestSetsPage() {
       const res = await testsetsApi.get(testSet.id);
       setDrawerSet(res.data);
     } catch {
-      message.error("测评集详情加载失败");
+      message.error('测评集详情加载失败');
     }
   }, []);
 
@@ -53,10 +53,10 @@ export default function TestSetsPage() {
     async (id: string) => {
       try {
         await testsetsApi.delete(id);
-        message.success("删除成功");
+        message.success('删除成功');
         load();
       } catch {
-        message.error("删除失败");
+        message.error('删除失败');
       }
     },
     [load]
@@ -67,7 +67,7 @@ export default function TestSetsPage() {
       const res = await testsetsApi.get(id);
       setDrawerSet(res.data);
     } catch {
-      message.error("刷新失败");
+      message.error('刷新失败');
     }
   }, []);
 
@@ -106,7 +106,7 @@ export default function TestSetsPage() {
         </button>
 
         {/* 测评集卡片 */}
-        {sets.map((set) => (
+        {sets.map(set => (
           <TestSetCard
             key={set.id}
             testSet={set}

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { App, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
+import { App, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 
-import { modelsApi } from "@/services/api";
-import { LlmModel } from "@/types";
-import { PROVIDER_DEFAULT_URLS, PROVIDERS } from "./providerConfig";
+import { modelsApi } from '@/services/api';
+import { LlmModel } from '@/types';
+import { PROVIDER_DEFAULT_URLS, PROVIDERS } from './providerConfig';
 
 interface Props {
   open: boolean;
@@ -13,14 +13,19 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function ModelFormModal({ open, editing, onSuccess, onCancel }: Props) {
+export default function ModelFormModal({
+  open,
+  editing,
+  onSuccess,
+  onCancel,
+}: Props) {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
 
   const initForm = () => {
     if (editing) {
-      form.setFieldsValue({ ...editing, apiKey: "" });
+      form.setFieldsValue({ ...editing, apiKey: '' });
     } else {
       form.resetFields();
       form.setFieldsValue({
@@ -42,16 +47,16 @@ export default function ModelFormModal({ open, editing, onSuccess, onCancel }: P
       if (editing && !values.apiKey) delete values.apiKey;
       if (editing) {
         await modelsApi.update(editing.id, values);
-        message.success("更新成功");
+        message.success('更新成功');
       } else {
         await modelsApi.create(values);
-        message.success("创建成功");
+        message.success('创建成功');
       }
       onSuccess();
     } catch (err: any) {
       // validateFields 校验失败时 err.errorFields 存在，antd 已显示字段错误，无需额外提示
       if (!err?.errorFields) {
-        message.error(err.response?.data?.message ?? "操作失败");
+        message.error(err.response?.data?.message ?? '操作失败');
       }
     } finally {
       setSaving(false);
@@ -60,19 +65,19 @@ export default function ModelFormModal({ open, editing, onSuccess, onCancel }: P
 
   return (
     <Modal
-      title={editing ? "编辑模型" : "添加模型"}
+      title={editing ? '编辑模型' : '添加模型'}
       open={open}
       onOk={handleSave}
       onCancel={onCancel}
       confirmLoading={saving}
-      okText={editing ? "保存" : "添加"}
+      okText={editing ? '保存' : '添加'}
       cancelText="取消"
       width={640}
       destroyOnHidden
-      afterOpenChange={(visible) => {
+      afterOpenChange={visible => {
         if (visible) initForm();
       }}
-      styles={{ body: { maxHeight: "65vh", overflowY: "auto" } }}
+      styles={{ body: { maxHeight: '65vh', overflowY: 'auto' } }}
     >
       <Form form={form} layout="vertical" className="mt-4">
         <Form.Item name="name" label="显示名称" rules={[{ required: true }]}>
@@ -82,15 +87,15 @@ export default function ModelFormModal({ open, editing, onSuccess, onCancel }: P
         <Form.Item name="provider" label="服务商" rules={[{ required: true }]}>
           <Select
             options={PROVIDERS}
-            onChange={(v) => {
-              form.setFieldValue("baseUrl", PROVIDER_DEFAULT_URLS[v] ?? "");
+            onChange={v => {
+              form.setFieldValue('baseUrl', PROVIDER_DEFAULT_URLS[v] ?? '');
             }}
           />
         </Form.Item>
 
         <Form.Item
           name="apiKey"
-          label={editing ? "API Key（留空保持不变）" : "API Key"}
+          label={editing ? 'API Key（留空保持不变）' : 'API Key'}
           rules={editing ? [] : [{ required: true }]}
         >
           <Input.Password placeholder="sk-..." />
@@ -130,7 +135,11 @@ export default function ModelFormModal({ open, editing, onSuccess, onCancel }: P
         </div>
 
         <div className="flex gap-8">
-          <Form.Item name="isJudge" label="可作为裁判模型" valuePropName="checked">
+          <Form.Item
+            name="isJudge"
+            label="可作为裁判模型"
+            valuePropName="checked"
+          >
             <Switch />
           </Form.Item>
           <Form.Item name="isActive" label="启用" valuePropName="checked">

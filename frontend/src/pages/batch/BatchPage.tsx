@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { App, Button } from "antd";
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { App, Button } from 'antd';
 
-import EvalResultDrawer from "@/components/EvalResultDrawer";
-import { evalApi, modelsApi, testsetsApi } from "@/services/api";
-import { EvalSession, LlmModel, TestSet } from "@/types";
-import BatchNewModal from "./BatchNewModal";
-import BatchSessionCard from "./BatchSessionCard";
+import EvalResultDrawer from '@/components/EvalResultDrawer';
+import { evalApi, modelsApi, testsetsApi } from '@/services/api';
+import { EvalSession, LlmModel, TestSet } from '@/types';
+import BatchNewModal from './BatchNewModal';
+import BatchSessionCard from './BatchSessionCard';
 
 export default function BatchPage() {
   const { message } = App.useApp();
@@ -21,7 +21,7 @@ export default function BatchPage() {
     const [modelsRes, setsRes, sessionsRes] = await Promise.all([
       modelsApi.list(),
       testsetsApi.list(),
-      evalApi.listSessions("batch"),
+      evalApi.listSessions('batch'),
     ]);
     setModels(modelsRes.data.filter((m: LlmModel) => m.isActive));
     setTestSets(setsRes.data);
@@ -33,8 +33,8 @@ export default function BatchPage() {
   }, [load]);
 
   const handleCardUpdate = useCallback((updated: EvalSession) => {
-    setSessions((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
-    setDrawerSession((prev) => (prev?.id === updated.id ? updated : prev));
+    setSessions(prev => prev.map(s => (s.id === updated.id ? updated : s)));
+    setDrawerSession(prev => (prev?.id === updated.id ? updated : prev));
   }, []);
 
   const handleViewResult = useCallback(async (session: EvalSession) => {
@@ -42,7 +42,7 @@ export default function BatchPage() {
       const res = await evalApi.getSession(session.id);
       setDrawerSession(res.data);
     } catch {
-      message.error("加载结果失败");
+      message.error('加载结果失败');
     }
   }, []);
 
@@ -50,16 +50,16 @@ export default function BatchPage() {
     try {
       const res = await evalApi.exportSession(session.id);
       const blob = new Blob([JSON.stringify(res.data, null, 2)], {
-        type: "application/json",
+        type: 'application/json',
       });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = `batch-${session.id.slice(0, 8)}.json`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      message.error("导出失败");
+      message.error('导出失败');
     }
   }, []);
 
@@ -85,7 +85,7 @@ export default function BatchPage() {
         </button>
 
         {/* 历史卡片 */}
-        {sessions.map((session) => (
+        {sessions.map(session => (
           <BatchSessionCard
             key={session.id}
             session={session}

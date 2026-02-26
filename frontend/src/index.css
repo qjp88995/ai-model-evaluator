@@ -1,11 +1,11 @@
 /* 声明 CSS 层级顺序：antd 在 utilities 之前，Tailwind 工具类天然覆盖 antd，无需 !important */
 @layer theme, base, antd, components, utilities;
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Markdown 渲染依赖的第三方 CSS */
-@import "katex/dist/katex.min.css";
-@import "highlight.js/styles/github-dark.css";
+@import 'katex/dist/katex.min.css';
+@import 'highlight.js/styles/github-dark.css';
 
 /* Tailwind v4 主题令牌 — 生成 text-primary / bg-primary 等工具类 */
 @theme {
@@ -17,14 +17,24 @@
   --animate-blink: blink 1s step-end infinite;
 
   @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 }
 
 /* CSS 变量 - 非 Tailwind 主题的设计令牌（渐变、毛玻璃、阴影等） */
 :root {
-  --bg-primary: radial-gradient(ellipse at top left, #1e1040 0%, #0d0d1a 60%, #050510 100%);
+  --bg-primary: radial-gradient(
+    ellipse at top left,
+    #1e1040 0%,
+    #0d0d1a 60%,
+    #050510 100%
+  );
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-bg-hover: rgba(255, 255, 255, 0.07);
   --glass-border: rgba(139, 92, 246, 0.2);
@@ -43,7 +53,8 @@
 
 /* 全局背景与滚动条 */
 @layer base {
-  html, body {
+  html,
+  body {
     background: var(--bg-primary);
     background-attachment: fixed;
     min-height: 100vh;
@@ -85,7 +96,9 @@
     border: 1px solid var(--glass-border);
     border-radius: 12px;
     box-shadow: var(--glow-primary);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition:
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
   }
 
   .glass-card:hover {
@@ -102,23 +115,46 @@
   .markdown-body {
     line-height: 1.7;
 
-    & > :first-child { margin-top: 0; }
-    & > :last-child { margin-bottom: 0; }
+    & > :first-child {
+      margin-top: 0;
+    }
+    & > :last-child {
+      margin-bottom: 0;
+    }
 
-    & p { margin: 0.6em 0; }
+    & p {
+      margin: 0.6em 0;
+    }
 
-    & h1, & h2, & h3, & h4, & h5, & h6 {
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
       margin: 1.2em 0 0.4em;
       font-weight: 600;
       line-height: 1.3;
       color: var(--text-primary);
     }
-    & h1 { font-size: 1.5em; }
-    & h2 { font-size: 1.25em; }
-    & h3 { font-size: 1.1em; }
+    & h1 {
+      font-size: 1.5em;
+    }
+    & h2 {
+      font-size: 1.25em;
+    }
+    & h3 {
+      font-size: 1.1em;
+    }
 
-    & ul, & ol { margin: 0.5em 0; padding-left: 1.5em; }
-    & li { margin: 0.2em 0; }
+    & ul,
+    & ol {
+      margin: 0.5em 0;
+      padding-left: 1.5em;
+    }
+    & li {
+      margin: 0.2em 0;
+    }
 
     & blockquote {
       border-left: 3px solid var(--glass-border-hover);
@@ -129,17 +165,45 @@
       color: var(--text-secondary);
     }
 
-    & table { width: 100%; border-collapse: collapse; margin: 0.8em 0; font-size: 0.875em; }
-    & th, & td { padding: 0.45em 0.75em; border: 1px solid var(--glass-border); text-align: left; }
-    & th { background: rgba(139, 92, 246, 0.08); color: var(--text-secondary); font-weight: 500; }
-    & tr:nth-child(even) td { background: var(--glass-bg); }
+    & table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.8em 0;
+      font-size: 0.875em;
+    }
+    & th,
+    & td {
+      padding: 0.45em 0.75em;
+      border: 1px solid var(--glass-border);
+      text-align: left;
+    }
+    & th {
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    & tr:nth-child(even) td {
+      background: var(--glass-bg);
+    }
 
-    & a { color: #a78bfa; text-decoration: none; }
-    & a:hover { text-decoration: underline; }
+    & a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+    & a:hover {
+      text-decoration: underline;
+    }
 
-    & hr { border: none; border-top: 1px solid var(--glass-border); margin: 1.2em 0; }
+    & hr {
+      border: none;
+      border-top: 1px solid var(--glass-border);
+      margin: 1.2em 0;
+    }
 
-    & img { max-width: 100%; border-radius: 6px; }
+    & img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
   }
 }
 

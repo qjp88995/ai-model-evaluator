@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { App, Button } from "antd";
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { App, Button } from 'antd';
 
-import { modelsApi } from "@/services/api";
-import { LlmModel } from "@/types";
-import ModelCard from "./ModelCard";
-import ModelFormModal from "./ModelFormModal";
+import { modelsApi } from '@/services/api';
+import { LlmModel } from '@/types';
+import ModelCard from './ModelCard';
+import ModelFormModal from './ModelFormModal';
 
 export default function ModelsPage() {
   const { message } = App.useApp();
@@ -20,7 +20,7 @@ export default function ModelsPage() {
       const res = await modelsApi.list();
       setModels(res.data);
     } catch {
-      message.error("加载失败");
+      message.error('加载失败');
     }
   }, []);
 
@@ -37,10 +37,10 @@ export default function ModelsPage() {
     async (id: string) => {
       try {
         await modelsApi.delete(id);
-        message.success("删除成功");
+        message.success('删除成功');
         load();
       } catch {
-        message.error("删除失败");
+        message.error('删除失败');
       }
     },
     [load]
@@ -56,7 +56,7 @@ export default function ModelsPage() {
         message.error(`连通失败: ${res.data.error}`);
       }
     } catch {
-      message.error("测试请求失败");
+      message.error('测试请求失败');
     } finally {
       setTesting(null);
     }
@@ -68,7 +68,9 @@ export default function ModelsPage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold gradient-text m-0">模型管理</h2>
         <div className="flex items-center gap-3">
-          <span className="text-slate-400 text-[13px]">共 {models.length} 个模型</span>
+          <span className="text-slate-400 text-[13px]">
+            共 {models.length} 个模型
+          </span>
           <Button size="small" icon={<ReloadOutlined />} onClick={load}>
             刷新
           </Button>
@@ -90,7 +92,7 @@ export default function ModelsPage() {
         </button>
 
         {/* 模型卡片列表 */}
-        {models.map((model) => (
+        {models.map(model => (
           <ModelCard
             key={model.id}
             model={model}
