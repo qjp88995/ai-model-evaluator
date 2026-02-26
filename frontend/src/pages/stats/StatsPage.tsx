@@ -199,7 +199,7 @@ export default function StatsPage() {
       </div>
 
       {/* 底部两列 */}
-      <div className="grid grid-cols-[14fr_10fr] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[14fr_10fr] gap-4">
         <div className="glass-card px-6 py-5">
           <div className="font-semibold text-slate-200 mb-4">
             各模型用量排行
