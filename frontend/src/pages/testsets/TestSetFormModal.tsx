@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, Input, message,Modal } from "antd";
+import { Form, Input, message, Modal } from "antd";
 
 import { testsetsApi } from "../../services/api";
 import { TestSet } from "../../types";
@@ -23,8 +23,8 @@ export default function TestSetFormModal({
 
   const handleSave = async () => {
     try {
-      const values = await form.validateFields();
       setSaving(true);
+      const values = await form.validateFields();
       if (editing) {
         await testsetsApi.update(editing.id, values);
         message.success("更新成功");
