@@ -43,28 +43,10 @@ export default function CasesDrawer({
   const [editingCase, setEditingCase] = useState<TestCase | null>(null);
   const [caseForm] = Form.useForm();
 
-  if (!testSet) return null;
-
-  const handleSaveCase = async () => {
-    try {
-      const values = await caseForm.validateFields();
-      if (editingCase) {
-        await testsetsApi.updateCase(testSet.id, editingCase.id, values);
-      } else {
-        await testsetsApi.addCase(testSet.id, values);
-      }
-      message.success("保存成功");
-      setCaseModalOpen(false);
-      onUpdated(testSet.id);
-    } catch (err: unknown) {
-      if (!(err instanceof Object && "errorFields" in err)) {
-        message.error("操作失败");
-      }
-    }
-  };
-
+  // All useCallback/useMemo must appear before any early return (Rules of Hooks)
   const handleDeleteCase = useCallback(
     async (caseId: string) => {
+      if (!testSet) return;
       try {
         await testsetsApi.deleteCase(testSet.id, caseId);
         message.success("删除成功");
@@ -73,11 +55,12 @@ export default function CasesDrawer({
         message.error("删除失败");
       }
     },
-    [testSet.id, onUpdated],
+    [testSet, onUpdated],
   );
 
   const handleImportCSV = useCallback(
     (file: File) => {
+      if (!testSet) return false;
       const reader = new FileReader();
       reader.onerror = () => message.error("文件读取失败");
       reader.onload = async (e) => {
@@ -105,7 +88,7 @@ export default function CasesDrawer({
       reader.readAsText(file);
       return false;
     },
-    [testSet.id, onUpdated],
+    [testSet, onUpdated],
   );
 
   const caseColumns = useMemo(
@@ -149,6 +132,26 @@ export default function CasesDrawer({
     ],
     [handleDeleteCase, caseForm],
   );
+
+  if (!testSet) return null;
+
+  const handleSaveCase = async () => {
+    try {
+      const values = await caseForm.validateFields();
+      if (editingCase) {
+        await testsetsApi.updateCase(testSet.id, editingCase.id, values);
+      } else {
+        await testsetsApi.addCase(testSet.id, values);
+      }
+      message.success("保存成功");
+      setCaseModalOpen(false);
+      onUpdated(testSet.id);
+    } catch (err: unknown) {
+      if (!(err instanceof Object && "errorFields" in err)) {
+        message.error("操作失败");
+      }
+    }
+  };
 
   return (
     <>

@@ -13,15 +13,15 @@ export default function TestSetsPage() {
   const [sets, setSets] = useState<TestSet[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSet, setEditingSet] = useState<TestSet | null>(null);
+  // drawerSet !== null 即视为 Drawer 打开，避免冗余布尔 state
   const [drawerSet, setDrawerSet] = useState<TestSet | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const load = useCallback(async () => {
     try {
       const res = await testsetsApi.list();
       setSets(res.data);
     } catch {
-      message.error("加载失败");
+      message.error("测评集列表加载失败");
     }
   }, []);
 
@@ -29,13 +29,17 @@ export default function TestSetsPage() {
     load();
   }, [load]);
 
+  const handleNewSet = useCallback(() => {
+    setEditingSet(null);
+    setModalOpen(true);
+  }, []);
+
   const handleManage = useCallback(async (testSet: TestSet) => {
     try {
       const res = await testsetsApi.get(testSet.id);
       setDrawerSet(res.data);
-      setDrawerOpen(true);
     } catch {
-      message.error("加载失败");
+      message.error("测评集详情加载失败");
     }
   }, []);
 
@@ -66,6 +70,19 @@ export default function TestSetsPage() {
     }
   }, []);
 
+  const handleModalSuccess = useCallback(() => {
+    setModalOpen(false);
+    load();
+  }, [load]);
+
+  const handleModalCancel = useCallback(() => {
+    setModalOpen(false);
+  }, []);
+
+  const handleDrawerClose = useCallback(() => {
+    setDrawerSet(null);
+  }, []);
+
   return (
     <div className="px-6 py-5">
       {/* 页头 */}
@@ -80,10 +97,7 @@ export default function TestSetsPage() {
       <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
         {/* 新建卡片 */}
         <button
-          onClick={() => {
-            setEditingSet(null);
-            setModalOpen(true);
-          }}
+          onClick={handleNewSet}
           className="glass-card px-5 py-4 min-h-40 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50/30 cursor-pointer transition-colors text-purple-400 hover:text-purple-600"
         >
           <PlusOutlined style={{ fontSize: 28 }} />
@@ -106,18 +120,15 @@ export default function TestSetsPage() {
       <TestSetFormModal
         open={modalOpen}
         editing={editingSet}
-        onSuccess={() => {
-          setModalOpen(false);
-          load();
-        }}
-        onCancel={() => setModalOpen(false)}
+        onSuccess={handleModalSuccess}
+        onCancel={handleModalCancel}
       />
 
       {/* 用例管理 Drawer */}
       <CasesDrawer
         testSet={drawerSet}
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        open={drawerSet !== null}
+        onClose={handleDrawerClose}
         onUpdated={handleCaseUpdated}
       />
     </div>
