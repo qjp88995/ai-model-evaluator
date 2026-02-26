@@ -62,9 +62,13 @@ export default function CasesDrawer({
   };
 
   const handleDeleteCase = async (caseId: string) => {
-    await testsetsApi.deleteCase(testSet.id, caseId);
-    message.success("删除成功");
-    onUpdated(testSet.id);
+    try {
+      await testsetsApi.deleteCase(testSet.id, caseId);
+      message.success("删除成功");
+      onUpdated(testSet.id);
+    } catch {
+      message.error("删除失败");
+    }
   };
 
   const handleImportCSV = (file: File) => {
@@ -185,11 +189,7 @@ export default function CasesDrawer({
         destroyOnHidden
       >
         <Form form={caseForm} layout="vertical" className="mt-4">
-          <Form.Item
-            name="prompt"
-            label="Prompt"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="prompt" label="Prompt" rules={[{ required: true }]}>
             <TextArea rows={4} />
           </Form.Item>
           <Form.Item name="referenceAnswer" label="参考答案">
