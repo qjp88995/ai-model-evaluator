@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { Button, Select, Space, Table, Tag } from "antd";
+import { App, Button, Select, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 
 import EvalResultDrawer from "../../components/EvalResultDrawer";
@@ -15,13 +15,14 @@ const statusColor: Record<string, string> = {
 };
 
 export default function HistoryPage() {
+  const { message } = App.useApp();
   const [sessions, setSessions] = useState<EvalSession[]>([]);
   const [models, setModels] = useState<LlmModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
   const [detail, setDetail] = useState<EvalSession | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const [sessionsRes, modelsRes] = await Promise.all([
@@ -33,11 +34,11 @@ export default function HistoryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [typeFilter]);
 
   useEffect(() => {
     load();
-  }, [typeFilter]);
+  }, [load]);
 
   const handleExport = async (id: string) => {
     const res = await evalApi.exportSession(id);
@@ -105,8 +106,12 @@ export default function HistoryPage() {
           <Button
             size="small"
             onClick={async () => {
-              const res = await evalApi.getSession(record.id);
-              setDetail(res.data);
+              try {
+                const res = await evalApi.getSession(record.id);
+                setDetail(res.data);
+              } catch {
+                message.error("加载详情失败");
+              }
             }}
           >
             详情
