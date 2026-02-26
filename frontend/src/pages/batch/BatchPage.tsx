@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { Button, message } from "antd";
 
 import { evalApi, modelsApi, testsetsApi } from "../../services/api";
 import { EvalSession, LlmModel, TestSet } from "../../types";
@@ -33,24 +33,33 @@ export default function BatchPage() {
 
   const handleCardUpdate = useCallback((updated: EvalSession) => {
     setSessions((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+    setDrawerSession((prev) => (prev?.id === updated.id ? updated : prev));
   }, []);
 
   const handleViewResult = useCallback(async (session: EvalSession) => {
-    const res = await evalApi.getSession(session.id);
-    setDrawerSession(res.data);
+    try {
+      const res = await evalApi.getSession(session.id);
+      setDrawerSession(res.data);
+    } catch {
+      message.error("加载结果失败");
+    }
   }, []);
 
   const handleExport = useCallback(async (session: EvalSession) => {
-    const res = await evalApi.exportSession(session.id);
-    const blob = new Blob([JSON.stringify(res.data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `batch-${session.id.slice(0, 8)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const res = await evalApi.exportSession(session.id);
+      const blob = new Blob([JSON.stringify(res.data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `batch-${session.id.slice(0, 8)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      message.error("导出失败");
+    }
   }, []);
 
   return (
