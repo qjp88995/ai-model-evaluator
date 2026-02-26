@@ -74,3 +74,18 @@ export interface StatsOverview {
   activeModels: number;
   totalSessions: number;
 }
+
+export interface ModelStat {
+  modelId: string;
+  modelName: string;
+  provider: string;
+  requestCount: number;
+  tokensInput: number;
+  tokensOutput: number;
+}
+
+export interface TrendPoint {
+  date: string;
+  tokensInput: number;
+  tokensOutput: number;
+}

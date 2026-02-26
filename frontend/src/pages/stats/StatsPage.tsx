@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Select, Table, Tag } from 'antd';
 import {
@@ -15,99 +15,118 @@ import {
 } from 'recharts';
 
 import { statsApi } from '@/services/api';
-import { StatsOverview } from '@/types';
+import { ModelStat, StatsOverview, TrendPoint } from '@/types';
+
+// 静态样式常量提取到组件外，避免每次渲染重新创建
+const tooltipStyle = {
+  contentStyle: {
+    background: 'rgba(26, 16, 64, 0.95)',
+    border: '1px solid rgba(139, 92, 246, 0.3)',
+    borderRadius: 8,
+    color: '#e2e8f0',
+  },
+};
+
+const axisProps = {
+  stroke: '#94a3b8',
+  tick: { fill: '#94a3b8', fontSize: 12 },
+};
+
+const modelColumns = [
+  { title: '模型', dataIndex: 'modelName', key: 'modelName' },
+  {
+    title: '服务商',
+    dataIndex: 'provider',
+    key: 'provider',
+    render: (v: string) => <Tag>{v}</Tag>,
+  },
+  { title: '请求数', dataIndex: 'requestCount', key: 'requestCount' },
+  { title: '输入Token', dataIndex: 'tokensInput', key: 'tokensInput' },
+  { title: '输出Token', dataIndex: 'tokensOutput', key: 'tokensOutput' },
+  {
+    title: '总Token',
+    key: 'total',
+    render: (_: unknown, r: ModelStat) =>
+      (r.tokensInput ?? 0) + (r.tokensOutput ?? 0),
+  },
+];
 
 export default function StatsPage() {
   const [overview, setOverview] = useState<StatsOverview | null>(null);
-  const [modelStats, setModelStats] = useState<any[]>([]);
-  const [trend, setTrend] = useState<any[]>([]);
+  const [modelStats, setModelStats] = useState<ModelStat[]>([]);
+  const [trend, setTrend] = useState<TrendPoint[]>([]);
   const [days, setDays] = useState(7);
+  const [loading, setLoading] = useState(false);
+  const [trendLoading, setTrendLoading] = useState(false);
 
-  const load = async () => {
-    const [overviewRes, modelsRes, trendRes] = await Promise.all([
-      statsApi.overview(),
-      statsApi.models(),
-      statsApi.trend(days),
-    ]);
-    setOverview(overviewRes.data);
-    setModelStats(modelsRes.data);
-    setTrend(trendRes.data);
-  };
-
+  // overview 和 modelStats 与天数无关，只加载一次
   useEffect(() => {
-    load();
+    setLoading(true);
+    Promise.all([statsApi.overview(), statsApi.models()])
+      .then(([overviewRes, modelsRes]) => {
+        setOverview(overviewRes.data);
+        setModelStats(modelsRes.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  // trend 随 days 变化重新加载
+  const loadTrend = useCallback(async () => {
+    setTrendLoading(true);
+    try {
+      const res = await statsApi.trend(days);
+      setTrend(res.data);
+    } catch {
+      // trend 加载失败不影响其他区块，静默处理
+    } finally {
+      setTrendLoading(false);
+    }
   }, [days]);
 
-  const modelColumns = [
-    { title: '模型', dataIndex: 'modelName', key: 'modelName' },
+  useEffect(() => {
+    loadTrend();
+  }, [loadTrend]);
+
+  const summaryCards = [
     {
-      title: '服务商',
-      dataIndex: 'provider',
-      key: 'provider',
-      render: (v: string) => <Tag>{v}</Tag>,
+      title: '总请求数',
+      value: overview?.totalRequests ?? 0,
+      color: '#a78bfa',
     },
-    { title: '请求数', dataIndex: 'requestCount', key: 'requestCount' },
-    { title: '输入Token', dataIndex: 'tokensInput', key: 'tokensInput' },
-    { title: '输出Token', dataIndex: 'tokensOutput', key: 'tokensOutput' },
     {
-      title: '总Token',
-      key: 'total',
-      render: (_: any, r: any) => (r.tokensInput ?? 0) + (r.tokensOutput ?? 0),
+      title: '输入 Token',
+      value: overview?.totalTokensInput ?? 0,
+      color: '#60a5fa',
+    },
+    {
+      title: '输出 Token',
+      value: overview?.totalTokensOutput ?? 0,
+      color: '#34d399',
+    },
+    {
+      title: '总 Token',
+      value:
+        (overview?.totalTokensInput ?? 0) + (overview?.totalTokensOutput ?? 0),
+      color: '#fbbf24',
+    },
+    {
+      title: '活跃模型',
+      value: overview?.activeModels ?? 0,
+      color: '#f472b6',
+    },
+    {
+      title: '评测会话',
+      value: overview?.totalSessions ?? 0,
+      color: '#a78bfa',
     },
   ];
-
-  const tooltipStyle = {
-    contentStyle: {
-      background: 'rgba(26, 16, 64, 0.95)',
-      border: '1px solid rgba(139, 92, 246, 0.3)',
-      borderRadius: 8,
-      color: '#e2e8f0',
-    },
-  };
-
-  const axisProps = {
-    stroke: '#94a3b8',
-    tick: { fill: '#94a3b8', fontSize: 12 },
-  };
 
   return (
     <>
       {/* 统计卡片行 */}
       <div className="grid grid-cols-6 gap-4 mb-5">
-        {[
-          {
-            title: '总请求数',
-            value: overview?.totalRequests ?? 0,
-            color: '#a78bfa',
-          },
-          {
-            title: '输入 Token',
-            value: overview?.totalTokensInput ?? 0,
-            color: '#60a5fa',
-          },
-          {
-            title: '输出 Token',
-            value: overview?.totalTokensOutput ?? 0,
-            color: '#34d399',
-          },
-          {
-            title: '总 Token',
-            value:
-              (overview?.totalTokensInput ?? 0) +
-              (overview?.totalTokensOutput ?? 0),
-            color: '#fbbf24',
-          },
-          {
-            title: '活跃模型',
-            value: overview?.activeModels ?? 0,
-            color: '#f472b6',
-          },
-          {
-            title: '评测会话',
-            value: overview?.totalSessions ?? 0,
-            color: '#a78bfa',
-          },
-        ].map(item => (
+        {summaryCards.map(item => (
           <div key={item.title} className="glass-card px-5 py-4">
             <div className="text-xs text-slate-400 mb-2 tracking-wider">
               {item.title}
@@ -116,7 +135,7 @@ export default function StatsPage() {
               className="text-[22px] font-bold"
               style={{ color: item.color }}
             >
-              {item.value.toLocaleString()}
+              {loading ? '—' : item.value.toLocaleString()}
             </div>
           </div>
         ))}
@@ -137,37 +156,44 @@ export default function StatsPage() {
             className="w-30"
           />
         </div>
-        <ResponsiveContainer width="100%" height={280}>
-          <AreaChart
-            data={trend}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(139, 92, 246, 0.1)"
-            />
-            <XAxis dataKey="date" {...axisProps} />
-            <YAxis {...axisProps} />
-            <Tooltip {...tooltipStyle} />
-            <Legend />
-            <Area
-              type="monotone"
-              dataKey="tokensInput"
-              name="输入Token"
-              stackId="1"
-              stroke="#7c3aed"
-              fill="rgba(124, 58, 237, 0.15)"
-            />
-            <Area
-              type="monotone"
-              dataKey="tokensOutput"
-              name="输出Token"
-              stackId="1"
-              stroke="#34d399"
-              fill="rgba(52, 211, 153, 0.15)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        <div
+          style={{
+            opacity: trendLoading ? 0.4 : 1,
+            transition: 'opacity 0.2s',
+          }}
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart
+              data={trend}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(139, 92, 246, 0.1)"
+              />
+              <XAxis dataKey="date" {...axisProps} />
+              <YAxis {...axisProps} />
+              <Tooltip {...tooltipStyle} />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="tokensInput"
+                name="输入Token"
+                stackId="1"
+                stroke="#7c3aed"
+                fill="rgba(124, 58, 237, 0.15)"
+              />
+              <Area
+                type="monotone"
+                dataKey="tokensOutput"
+                name="输出Token"
+                stackId="1"
+                stroke="#34d399"
+                fill="rgba(52, 211, 153, 0.15)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* 底部两列 */}
@@ -181,6 +207,7 @@ export default function StatsPage() {
             size="small"
             columns={modelColumns}
             dataSource={modelStats}
+            loading={loading}
             pagination={false}
           />
         </div>
