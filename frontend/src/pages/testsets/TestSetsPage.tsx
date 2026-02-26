@@ -30,9 +30,13 @@ export default function TestSetsPage() {
   }, [load]);
 
   const handleManage = useCallback(async (testSet: TestSet) => {
-    const res = await testsetsApi.get(testSet.id);
-    setDrawerSet(res.data);
-    setDrawerOpen(true);
+    try {
+      const res = await testsetsApi.get(testSet.id);
+      setDrawerSet(res.data);
+      setDrawerOpen(true);
+    } catch {
+      message.error("加载失败");
+    }
   }, []);
 
   const handleEdit = useCallback((testSet: TestSet) => {
@@ -40,19 +44,26 @@ export default function TestSetsPage() {
     setModalOpen(true);
   }, []);
 
-  const handleDelete = useCallback(async (id: string) => {
-    try {
-      await testsetsApi.delete(id);
-      message.success("删除成功");
-      load();
-    } catch {
-      message.error("删除失败");
-    }
-  }, [load]);
+  const handleDelete = useCallback(
+    async (id: string) => {
+      try {
+        await testsetsApi.delete(id);
+        message.success("删除成功");
+        load();
+      } catch {
+        message.error("删除失败");
+      }
+    },
+    [load],
+  );
 
   const handleCaseUpdated = useCallback(async (id: string) => {
-    const res = await testsetsApi.get(id);
-    setDrawerSet(res.data);
+    try {
+      const res = await testsetsApi.get(id);
+      setDrawerSet(res.data);
+    } catch {
+      message.error("刷新失败");
+    }
   }, []);
 
   return (
@@ -69,7 +80,10 @@ export default function TestSetsPage() {
       <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
         {/* 新建卡片 */}
         <button
-          onClick={() => { setEditingSet(null); setModalOpen(true); }}
+          onClick={() => {
+            setEditingSet(null);
+            setModalOpen(true);
+          }}
           className="glass-card px-5 py-4 min-h-40 flex flex-col items-center justify-center gap-3 border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50/30 cursor-pointer transition-colors text-purple-400 hover:text-purple-600"
         >
           <PlusOutlined style={{ fontSize: 28 }} />
@@ -92,7 +106,10 @@ export default function TestSetsPage() {
       <TestSetFormModal
         open={modalOpen}
         editing={editingSet}
-        onSuccess={() => { setModalOpen(false); load(); }}
+        onSuccess={() => {
+          setModalOpen(false);
+          load();
+        }}
         onCancel={() => setModalOpen(false)}
       />
 
