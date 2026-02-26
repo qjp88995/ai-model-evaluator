@@ -33,8 +33,8 @@ export default function TestSetFormModal({
         message.success("创建成功");
       }
       onSuccess();
-    } catch (err: any) {
-      if (!err?.errorFields) {
+    } catch (err: unknown) {
+      if (!(err instanceof Object && "errorFields" in err)) {
         message.error("操作失败");
       }
     } finally {

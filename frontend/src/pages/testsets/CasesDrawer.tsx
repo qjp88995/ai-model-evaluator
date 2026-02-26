@@ -41,6 +41,7 @@ export default function CasesDrawer({
 }: Props) {
   const [caseModalOpen, setCaseModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<TestCase | null>(null);
+  const [savingCase, setSavingCase] = useState(false);
   const [caseForm] = Form.useForm();
 
   // All useCallback/useMemo must appear before any early return (Rules of Hooks)
@@ -130,7 +131,7 @@ export default function CasesDrawer({
         ),
       },
     ],
-    [handleDeleteCase, caseForm],
+    [handleDeleteCase],
   );
 
   if (!testSet) return null;
@@ -138,6 +139,7 @@ export default function CasesDrawer({
   const handleSaveCase = async () => {
     try {
       const values = await caseForm.validateFields();
+      setSavingCase(true);
       if (editingCase) {
         await testsetsApi.updateCase(testSet.id, editingCase.id, values);
       } else {
@@ -150,6 +152,8 @@ export default function CasesDrawer({
       if (!(err instanceof Object && "errorFields" in err)) {
         message.error("操作失败");
       }
+    } finally {
+      setSavingCase(false);
     }
   };
 
@@ -186,7 +190,8 @@ export default function CasesDrawer({
         }
       >
         <Text type="secondary" className="block mb-2">
-          CSV 格式：prompt,referenceAnswer,scoringCriteria（第一行为表头）
+          CSV
+          格式：prompt,referenceAnswer,scoringCriteria（第一行为表头，字段值内不可含逗号）
         </Text>
         <Table
           rowKey="id"
@@ -202,6 +207,7 @@ export default function CasesDrawer({
         open={caseModalOpen}
         onOk={handleSaveCase}
         onCancel={() => setCaseModalOpen(false)}
+        confirmLoading={savingCase}
         destroyOnHidden
       >
         <Form form={caseForm} layout="vertical" className="mt-4">
