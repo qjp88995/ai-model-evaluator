@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, Input, message, Modal } from "antd";
+import { App, Form, Input, Modal } from "antd";
 
 import { testsetsApi } from "../../services/api";
 import { TestSet } from "../../types";
@@ -18,6 +18,7 @@ export default function TestSetFormModal({
   onSuccess,
   onCancel,
 }: Props) {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
 

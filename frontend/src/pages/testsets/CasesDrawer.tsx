@@ -7,11 +7,11 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import {
+  App,
   Button,
   Drawer,
   Form,
   Input,
-  message,
   Modal,
   Popconfirm,
   Space,
@@ -39,6 +39,7 @@ export default function CasesDrawer({
   onClose,
   onUpdated,
 }: Props) {
+  const { message } = App.useApp();
   const [caseModalOpen, setCaseModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<TestCase | null>(null);
   const [savingCase, setSavingCase] = useState(false);
@@ -110,6 +111,7 @@ export default function CasesDrawer({
       {
         title: "操作",
         key: "actions",
+        width: 120,
         render: (_: unknown, record: TestCase) => (
           <Space>
             <Button
@@ -165,6 +167,9 @@ export default function CasesDrawer({
         onClose={onClose}
         size="large"
         destroyOnHidden
+        styles={{
+          wrapper: { width: "75%" },
+        }}
         extra={
           <Space>
             <Upload

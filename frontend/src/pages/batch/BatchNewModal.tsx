@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, Input, message,Modal, Select } from "antd";
+import { App, Form, Input, Modal, Select } from "antd";
 
 import { evalApi } from "../../services/api";
 import { LlmModel, TestSet } from "../../types";
@@ -20,6 +20,7 @@ export default function BatchNewModal({
   onSuccess,
   onCancel,
 }: Props) {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const judgeModels = models.filter((m) => m.isJudge);

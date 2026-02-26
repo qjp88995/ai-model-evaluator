@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button, message } from "antd";
+import { App, Button } from "antd";
 
 import { evalApi, modelsApi, testsetsApi } from "../../services/api";
 import { EvalSession, LlmModel, TestSet } from "../../types";
@@ -10,6 +10,7 @@ import BatchResultDrawer from "./BatchResultDrawer";
 import BatchSessionCard from "./BatchSessionCard";
 
 export default function BatchPage() {
+  const { message } = App.useApp();
   const [models, setModels] = useState<LlmModel[]>([]);
   const [testSets, setTestSets] = useState<TestSet[]>([]);
   const [sessions, setSessions] = useState<EvalSession[]>([]);

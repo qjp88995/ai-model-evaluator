@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button, message } from "antd";
+import { App, Button } from "antd";
 
 import { testsetsApi } from "../../services/api";
 import { TestSet } from "../../types";
@@ -10,6 +10,7 @@ import TestSetCard from "./TestSetCard";
 import TestSetFormModal from "./TestSetFormModal";
 
 export default function TestSetsPage() {
+  const { message } = App.useApp();
   const [sets, setSets] = useState<TestSet[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSet, setEditingSet] = useState<TestSet | null>(null);

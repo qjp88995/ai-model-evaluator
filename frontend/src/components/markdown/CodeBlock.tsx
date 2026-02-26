@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
-import { Button, message } from "antd";
+import { App, Button } from "antd";
 
 // 从高亮后的 React 节点树中递归提取纯文本（用于复制功能）
 function extractText(node: React.ReactNode): string {
@@ -28,6 +28,7 @@ export default function CodeBlock({
   className,
   children,
 }: CodeBlockProps) {
+  const { message } = App.useApp();
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

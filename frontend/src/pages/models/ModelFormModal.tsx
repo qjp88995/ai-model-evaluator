@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, Input, InputNumber, message, Modal, Select, Switch } from "antd";
+import { App, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
 
 import { modelsApi } from "../../services/api";
 import { LlmModel } from "../../types";
@@ -19,6 +19,7 @@ export default function ModelFormModal({
   onSuccess,
   onCancel,
 }: Props) {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
 

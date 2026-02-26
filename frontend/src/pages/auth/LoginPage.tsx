@@ -6,11 +6,12 @@ import {
   ThunderboltOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Button, Form, Input, message } from "antd";
+import { App, Button, Form, Input } from "antd";
 
 import { authApi } from "../../services/api";
 
 export default function LoginPage() {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
