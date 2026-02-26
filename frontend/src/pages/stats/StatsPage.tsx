@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Select, Table, Tag } from 'antd';
+import { App, Select, Table, Tag } from 'antd';
 import {
   Area,
   AreaChart,
@@ -52,6 +52,7 @@ const modelColumns = [
 ];
 
 export default function StatsPage() {
+  const { message } = App.useApp();
   const [overview, setOverview] = useState<StatsOverview | null>(null);
   const [modelStats, setModelStats] = useState<ModelStat[]>([]);
   const [trend, setTrend] = useState<TrendPoint[]>([]);
@@ -67,9 +68,9 @@ export default function StatsPage() {
         setOverview(overviewRes.data);
         setModelStats(modelsRes.data);
       })
-      .catch(() => {})
+      .catch(() => message.error('加载统计数据失败'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [message]);
 
   // trend 随 days 变化重新加载
   const loadTrend = useCallback(async () => {
@@ -88,44 +89,48 @@ export default function StatsPage() {
     loadTrend();
   }, [loadTrend]);
 
-  const summaryCards = [
-    {
-      title: '总请求数',
-      value: overview?.totalRequests ?? 0,
-      color: '#a78bfa',
-    },
-    {
-      title: '输入 Token',
-      value: overview?.totalTokensInput ?? 0,
-      color: '#60a5fa',
-    },
-    {
-      title: '输出 Token',
-      value: overview?.totalTokensOutput ?? 0,
-      color: '#34d399',
-    },
-    {
-      title: '总 Token',
-      value:
-        (overview?.totalTokensInput ?? 0) + (overview?.totalTokensOutput ?? 0),
-      color: '#fbbf24',
-    },
-    {
-      title: '活跃模型',
-      value: overview?.activeModels ?? 0,
-      color: '#f472b6',
-    },
-    {
-      title: '评测会话',
-      value: overview?.totalSessions ?? 0,
-      color: '#a78bfa',
-    },
-  ];
+  const summaryCards = useMemo(
+    () => [
+      {
+        title: '总请求数',
+        value: overview?.totalRequests ?? 0,
+        color: '#a78bfa',
+      },
+      {
+        title: '输入 Token',
+        value: overview?.totalTokensInput ?? 0,
+        color: '#60a5fa',
+      },
+      {
+        title: '输出 Token',
+        value: overview?.totalTokensOutput ?? 0,
+        color: '#34d399',
+      },
+      {
+        title: '总 Token',
+        value:
+          (overview?.totalTokensInput ?? 0) +
+          (overview?.totalTokensOutput ?? 0),
+        color: '#fbbf24',
+      },
+      {
+        title: '活跃模型',
+        value: overview?.activeModels ?? 0,
+        color: '#f472b6',
+      },
+      {
+        title: '评测会话',
+        value: overview?.totalSessions ?? 0,
+        color: '#a78bfa',
+      },
+    ],
+    [overview]
+  );
 
   return (
     <>
       {/* 统计卡片行 */}
-      <div className="grid grid-cols-6 gap-4 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-5">
         {summaryCards.map(item => (
           <div key={item.title} className="glass-card px-5 py-4">
             <div className="text-xs text-slate-400 mb-2 tracking-wider">

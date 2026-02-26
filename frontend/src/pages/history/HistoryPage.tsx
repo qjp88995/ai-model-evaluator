@@ -24,13 +24,13 @@ export default function HistoryPage() {
   const [detail, setDetail] = useState<EvalSession | null>(null);
   const [detailLoadingId, setDetailLoadingId] = useState<string | null>(null);
 
-  // models 不随 typeFilter 变化，只加载一次
+  // models 不随 typeFilter 变化，只加载一次；供 EvalResultDrawer 展示模型名称
   useEffect(() => {
     modelsApi
       .list()
       .then(res => setModels(res.data))
-      .catch(() => {});
-  }, []);
+      .catch(() => message.error('加载模型列表失败'));
+  }, [message]);
 
   const load = useCallback(async () => {
     setLoading(true);
