@@ -73,7 +73,7 @@ import { authApi } from "../../services/api"; // ❌
 
 ## 前端代码格式化（Prettier）
 
-Prettier 在 `git commit` 时通过 pre-commit hook 自动格式化暂存文件，也可手动运行：
+pre-commit hook 通过 `lint-staged` 对暂存的 `src/` 文件依次执行：先 Prettier 格式化，再 ESLint 检查（有错误或 warning 则阻断提交）。也可手动运行：
 
 ```bash
 cd frontend
@@ -97,7 +97,7 @@ pnpm lint:fix    # 自动修复
   - `destroyOnClose` → `destroyOnHidden`（Modal/Drawer）
   - `Space direction` → `orientation`
   - `Drawer width={n}` → `size="large"`（预设：default 378px / large 736px）
-- `simple-import-sort`：导入分组顺序 react → 三方库 → 相对路径 → CSS
+- `simple-import-sort`：导入分组顺序 react → 三方库 → `@/` 路径别名 → 相对路径（`./`、`../`）→ CSS
 
 ## 前端页面规范
 
