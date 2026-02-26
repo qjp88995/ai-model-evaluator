@@ -1,11 +1,8 @@
-import {
-  ApiOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { ApiOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Tag, Tooltip } from "antd";
 
 import { LlmModel } from "../../types";
+import { PROVIDER_COLORS, PROVIDERS } from "./providerConfig";
 
 interface Props {
   model: LlmModel;
@@ -14,30 +11,6 @@ interface Props {
   onEdit: (model: LlmModel) => void;
   onDelete: (id: string) => void;
 }
-
-const PROVIDER_COLORS: Record<string, string> = {
-  openai: "green",
-  anthropic: "orange",
-  zhipu: "blue",
-  moonshot: "purple",
-  qianwen: "cyan",
-  deepseek: "volcano",
-  google: "geekblue",
-  minimax: "magenta",
-  custom: "default",
-};
-
-const PROVIDER_LABELS: Record<string, string> = {
-  openai: "OpenAI",
-  anthropic: "Anthropic",
-  deepseek: "DeepSeek",
-  google: "Google",
-  minimax: "MiniMax",
-  zhipu: "智谱 AI",
-  moonshot: "Moonshot",
-  qianwen: "通义千问",
-  custom: "自定义",
-};
 
 export default function ModelCard({
   model,
@@ -57,7 +30,8 @@ export default function ModelCard({
           color={PROVIDER_COLORS[model.provider] ?? "default"}
           className="shrink-0"
         >
-          {PROVIDER_LABELS[model.provider] ?? model.provider}
+          {PROVIDERS.find((p) => p.value === model.provider)?.label ??
+            model.provider}
         </Tag>
       </div>
 
@@ -94,10 +68,7 @@ export default function ModelCard({
           icon={<EditOutlined />}
           onClick={() => onEdit(model)}
         />
-        <Popconfirm
-          title="确认删除?"
-          onConfirm={() => onDelete(model.id)}
-        >
+        <Popconfirm title="确认删除?" onConfirm={() => onDelete(model.id)}>
           <Button size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>
       </Space>
