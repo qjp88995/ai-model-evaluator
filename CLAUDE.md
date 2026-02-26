@@ -80,7 +80,7 @@ cd frontend
 pnpm format   # 格式化 src/ 下所有 ts/tsx/css/json
 ```
 
-配置（`frontend/.prettierrc`）：`semi: true`、`singleQuote: false`、`printWidth: 100`、`trailingComma: "es5"`
+配置（`frontend/.prettierrc`）：`singleQuote: true`（JSX 属性除外）、`printWidth: 80`、`arrowParens: "avoid"`、`endOfLine: "lf"`
 
 ## 前端 ESLint 规范
 
