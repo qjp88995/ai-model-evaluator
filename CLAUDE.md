@@ -62,6 +62,26 @@ docker compose up -d --build   # 代码变更后重建
 - 像素转数字单位：`w-150`（600px）、`ml-55`（220px）、`-bottom-12.5`（50px）等
 - 规范类名替代任意值：`tracking-wider`、`backdrop-blur-md`、`wrap-break-word`、`z-100`
 
+## 前端路径别名
+
+`@` 指向 `frontend/src`，所有跨目录引用必须使用别名，禁止 `../../` 相对路径：
+
+```ts
+import { authApi } from "@/services/api";   // ✅
+import { authApi } from "../../services/api"; // ❌
+```
+
+## 前端代码格式化（Prettier）
+
+Prettier 在 `git commit` 时通过 pre-commit hook 自动格式化暂存文件，也可手动运行：
+
+```bash
+cd frontend
+pnpm format   # 格式化 src/ 下所有 ts/tsx/css/json
+```
+
+配置（`frontend/.prettierrc`）：`semi: true`、`singleQuote: false`、`printWidth: 100`、`trailingComma: "es5"`
+
 ## 前端 ESLint 规范
 
 构建脚本已集成 ESLint：`eslint src && tsc -b && vite build`，CI 自动拦截。
