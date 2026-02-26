@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { App, Form, Input, InputNumber, Modal, Select, Switch } from "antd";
 
-import { modelsApi } from "../../services/api";
-import { LlmModel } from "../../types";
+import { modelsApi } from "@/services/api";
+import { LlmModel } from "@/types";
 import { PROVIDER_DEFAULT_URLS, PROVIDERS } from "./providerConfig";
 
 interface Props {
@@ -13,12 +13,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function ModelFormModal({
-  open,
-  editing,
-  onSuccess,
-  onCancel,
-}: Props) {
+export default function ModelFormModal({ open, editing, onSuccess, onCancel }: Props) {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
@@ -135,11 +130,7 @@ export default function ModelFormModal({
         </div>
 
         <div className="flex gap-8">
-          <Form.Item
-            name="isJudge"
-            label="可作为裁判模型"
-            valuePropName="checked"
-          >
+          <Form.Item name="isJudge" label="可作为裁判模型" valuePropName="checked">
             <Switch />
           </Form.Item>
           <Form.Item name="isActive" label="启用" valuePropName="checked">

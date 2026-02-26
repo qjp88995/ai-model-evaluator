@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 
-import EvalResultDrawer from "../../components/EvalResultDrawer";
-import { evalApi, modelsApi, testsetsApi } from "../../services/api";
-import { EvalSession, LlmModel, TestSet } from "../../types";
+import EvalResultDrawer from "@/components/EvalResultDrawer";
+import { evalApi, modelsApi, testsetsApi } from "@/services/api";
+import { EvalSession, LlmModel, TestSet } from "@/types";
 import BatchNewModal from "./BatchNewModal";
 import BatchSessionCard from "./BatchSessionCard";
 

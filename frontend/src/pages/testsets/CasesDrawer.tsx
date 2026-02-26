@@ -1,11 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   App,
   Button,
@@ -20,8 +15,8 @@ import {
   Upload,
 } from "antd";
 
-import { testsetsApi } from "../../services/api";
-import { TestCase, TestSet } from "../../types";
+import { testsetsApi } from "@/services/api";
+import { TestCase, TestSet } from "@/types";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -33,12 +28,7 @@ interface Props {
   onUpdated: (id: string) => void;
 }
 
-export default function CasesDrawer({
-  testSet,
-  open,
-  onClose,
-  onUpdated,
-}: Props) {
+export default function CasesDrawer({ testSet, open, onClose, onUpdated }: Props) {
   const { message } = App.useApp();
   const [caseModalOpen, setCaseModalOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<TestCase | null>(null);
@@ -57,7 +47,7 @@ export default function CasesDrawer({
         message.error("删除失败");
       }
     },
-    [testSet, onUpdated],
+    [testSet, onUpdated]
   );
 
   const handleImportCSV = useCallback(
@@ -90,7 +80,7 @@ export default function CasesDrawer({
       reader.readAsText(file);
       return false;
     },
-    [testSet, onUpdated],
+    [testSet, onUpdated]
   );
 
   const caseColumns = useMemo(
@@ -123,17 +113,14 @@ export default function CasesDrawer({
                 setCaseModalOpen(true);
               }}
             />
-            <Popconfirm
-              title="确认删除?"
-              onConfirm={() => handleDeleteCase(record.id)}
-            >
+            <Popconfirm title="确认删除?" onConfirm={() => handleDeleteCase(record.id)}>
               <Button size="small" danger icon={<DeleteOutlined />} />
             </Popconfirm>
           </Space>
         ),
       },
     ],
-    [handleDeleteCase],
+    [handleDeleteCase]
   );
 
   if (!testSet) return null;
@@ -172,11 +159,7 @@ export default function CasesDrawer({
         }}
         extra={
           <Space>
-            <Upload
-              accept=".csv"
-              beforeUpload={handleImportCSV}
-              showUploadList={false}
-            >
+            <Upload accept=".csv" beforeUpload={handleImportCSV} showUploadList={false}>
               <Button icon={<UploadOutlined />}>导入 CSV</Button>
             </Upload>
             <Button
@@ -195,8 +178,7 @@ export default function CasesDrawer({
         }
       >
         <Text type="secondary" className="block mb-2">
-          CSV
-          格式：prompt,referenceAnswer,scoringCriteria（第一行为表头，字段值内不可含逗号）
+          CSV 格式：prompt,referenceAnswer,scoringCriteria（第一行为表头，字段值内不可含逗号）
         </Text>
         <Table
           rowKey="id"

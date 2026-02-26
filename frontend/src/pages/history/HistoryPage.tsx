@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { App, Button, Select, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 
-import EvalResultDrawer from "../../components/EvalResultDrawer";
-import { evalApi, modelsApi } from "../../services/api";
-import { EvalSession, LlmModel } from "../../types";
+import EvalResultDrawer from "@/components/EvalResultDrawer";
+import { evalApi, modelsApi } from "@/services/api";
+import { EvalSession, LlmModel } from "@/types";
 
 const statusColor: Record<string, string> = {
   pending: "default",
@@ -60,9 +60,7 @@ export default function HistoryPage() {
       key: "type",
       width: 80,
       render: (v: string) => (
-        <Tag color={v === "compare" ? "blue" : "purple"}>
-          {v === "compare" ? "对比" : "批量"}
-        </Tag>
+        <Tag color={v === "compare" ? "blue" : "purple"}>{v === "compare" ? "对比" : "批量"}</Tag>
       ),
     },
     {
@@ -149,11 +147,7 @@ export default function HistoryPage() {
         pagination={{ pageSize: 10 }}
       />
 
-      <EvalResultDrawer
-        session={detail}
-        models={models}
-        onClose={() => setDetail(null)}
-      />
+      <EvalResultDrawer session={detail} models={models} onClose={() => setDetail(null)} />
     </div>
   );
 }

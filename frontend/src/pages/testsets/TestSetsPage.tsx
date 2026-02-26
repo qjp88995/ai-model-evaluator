@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 
-import { testsetsApi } from "../../services/api";
-import { TestSet } from "../../types";
+import { testsetsApi } from "@/services/api";
+import { TestSet } from "@/types";
 import CasesDrawer from "./CasesDrawer";
 import TestSetCard from "./TestSetCard";
 import TestSetFormModal from "./TestSetFormModal";
@@ -59,7 +59,7 @@ export default function TestSetsPage() {
         message.error("删除失败");
       }
     },
-    [load],
+    [load]
   );
 
   const handleCaseUpdated = useCallback(async (id: string) => {

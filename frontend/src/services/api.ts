@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { router } from "../router";
+import { router } from "@/router";
 
 const api = axios.create({
   baseURL: "/api",
@@ -23,13 +23,12 @@ api.interceptors.response.use(
       router.navigate("/login");
     }
     return Promise.reject(err);
-  },
+  }
 );
 
 // Auth
 export const authApi = {
-  login: (username: string, password: string) =>
-    api.post("/auth/login", { username, password }),
+  login: (username: string, password: string) => api.post("/auth/login", { username, password }),
 };
 
 // Models
@@ -52,10 +51,8 @@ export const testsetsApi = {
   addCase: (id: string, data: any) => api.post(`/testsets/${id}/cases`, data),
   updateCase: (id: string, caseId: string, data: any) =>
     api.put(`/testsets/${id}/cases/${caseId}`, data),
-  deleteCase: (id: string, caseId: string) =>
-    api.delete(`/testsets/${id}/cases/${caseId}`),
-  importCases: (id: string, cases: any[]) =>
-    api.post(`/testsets/${id}/import`, cases),
+  deleteCase: (id: string, caseId: string) => api.delete(`/testsets/${id}/cases/${caseId}`),
+  importCases: (id: string, cases: any[]) => api.post(`/testsets/${id}/import`, cases),
 };
 
 // Eval
@@ -72,8 +69,7 @@ export const evalApi = {
 export const statsApi = {
   overview: () => api.get("/stats/overview"),
   models: () => api.get("/stats/models"),
-  trend: (days?: number) =>
-    api.get("/stats/trend", { params: days ? { days } : undefined }),
+  trend: (days?: number) => api.get("/stats/trend", { params: days ? { days } : undefined }),
 };
 
 export default api;

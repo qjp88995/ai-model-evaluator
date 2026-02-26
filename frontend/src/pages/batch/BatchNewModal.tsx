@@ -2,8 +2,8 @@ import { useState } from "react";
 
 import { App, Form, Input, Modal, Select } from "antd";
 
-import { evalApi } from "../../services/api";
-import { LlmModel, TestSet } from "../../types";
+import { evalApi } from "@/services/api";
+import { LlmModel, TestSet } from "@/types";
 
 interface Props {
   open: boolean;
@@ -13,13 +13,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export default function BatchNewModal({
-  open,
-  models,
-  testSets,
-  onSuccess,
-  onCancel,
-}: Props) {
+export default function BatchNewModal({ open, models, testSets, onSuccess, onCancel }: Props) {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);

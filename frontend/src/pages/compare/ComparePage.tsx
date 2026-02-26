@@ -22,9 +22,9 @@ import {
   Typography,
 } from "antd";
 
-import { MarkdownRenderer } from "../../components/markdown";
-import { evalApi, modelsApi } from "../../services/api";
-import { LlmModel } from "../../types";
+import { MarkdownRenderer } from "@/components/markdown";
+import { evalApi, modelsApi } from "@/services/api";
+import { LlmModel } from "@/types";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -60,9 +60,7 @@ export default function ComparePage() {
   const contentRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
-    modelsApi
-      .list()
-      .then((res) => setModels(res.data.filter((m: LlmModel) => m.isActive)));
+    modelsApi.list().then((res) => setModels(res.data.filter((m: LlmModel) => m.isActive)));
   }, []);
 
   // 流式输出时自动滚到底部
@@ -108,7 +106,7 @@ export default function ComparePage() {
       selectedIds.forEach((modelId) => {
         const token = localStorage.getItem("token") ?? "";
         const es = new EventSource(
-          `/api/eval/compare/${sid}/stream/${modelId}?token=${encodeURIComponent(token)}`,
+          `/api/eval/compare/${sid}/stream/${modelId}?token=${encodeURIComponent(token)}`
         );
         eventSourcesRef.current.push(es);
 
@@ -128,7 +126,7 @@ export default function ComparePage() {
                 };
               }
               return { ...s, content: s.content + (data.chunk ?? "") };
-            }),
+            })
           );
 
           if (data.done) {
@@ -144,10 +142,8 @@ export default function ComparePage() {
           es.close();
           setModelStates((prev) =>
             prev.map((s) =>
-              s.id === modelId && !s.done
-                ? { ...s, done: true, error: "连接中断" }
-                : s,
-            ),
+              s.id === modelId && !s.done ? { ...s, done: true, error: "连接中断" } : s
+            )
           );
           doneCount += 1;
           if (doneCount >= total) {
@@ -204,8 +200,7 @@ export default function ComparePage() {
   }));
 
   const colSpan = getColSpan(modelStates.length);
-  const allDone =
-    modelStates.length > 0 && modelStates.every((s) => s.done) && !running;
+  const allDone = modelStates.length > 0 && modelStates.every((s) => s.done) && !running;
 
   return (
     <div>
@@ -251,11 +246,7 @@ export default function ComparePage() {
             className="resize-none"
           />
           <div className="flex gap-2 justify-end">
-            <Button
-              icon={<ClearOutlined />}
-              onClick={handleClear}
-              disabled={running}
-            >
+            <Button icon={<ClearOutlined />} onClick={handleClear} disabled={running}>
               清除
             </Button>
             <Button
@@ -291,9 +282,7 @@ export default function ComparePage() {
                     <div className="flex justify-between items-start mb-3 shrink-0">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-200">
-                            {state.name}
-                          </span>
+                          <span className="font-semibold text-slate-200">{state.name}</span>
                           {state.done ? (
                             state.error ? (
                               <Tag color="red">失败</Tag>
@@ -344,10 +333,7 @@ export default function ComparePage() {
                       {state.error ? (
                         <Text type="danger">{state.error}</Text>
                       ) : (
-                        <MarkdownRenderer
-                          content={state.content}
-                          streaming={!state.done}
-                        />
+                        <MarkdownRenderer content={state.content} streaming={!state.done} />
                       )}
                     </div>
                   </div>

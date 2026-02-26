@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Select, Table, Tag } from "antd";
 import {
@@ -14,8 +14,8 @@ import {
   YAxis,
 } from "recharts";
 
-import { statsApi } from "../../services/api";
-import { StatsOverview } from "../../types";
+import { statsApi } from "@/services/api";
+import { StatsOverview } from "@/types";
 
 export default function StatsPage() {
   const [overview, setOverview] = useState<StatsOverview | null>(null);
@@ -92,9 +92,7 @@ export default function StatsPage() {
           },
           {
             title: "总 Token",
-            value:
-              (overview?.totalTokensInput ?? 0) +
-              (overview?.totalTokensOutput ?? 0),
+            value: (overview?.totalTokensInput ?? 0) + (overview?.totalTokensOutput ?? 0),
             color: "#fbbf24",
           },
           {
@@ -109,13 +107,8 @@ export default function StatsPage() {
           },
         ].map((item) => (
           <div key={item.title} className="glass-card px-5 py-4">
-            <div className="text-xs text-slate-400 mb-2 tracking-wider">
-              {item.title}
-            </div>
-            <div
-              className="text-[22px] font-bold"
-              style={{ color: item.color }}
-            >
+            <div className="text-xs text-slate-400 mb-2 tracking-wider">{item.title}</div>
+            <div className="text-[22px] font-bold" style={{ color: item.color }}>
               {item.value.toLocaleString()}
             </div>
           </div>
@@ -138,14 +131,8 @@ export default function StatsPage() {
           />
         </div>
         <ResponsiveContainer width="100%" height={280}>
-          <AreaChart
-            data={trend}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(139, 92, 246, 0.1)"
-            />
+          <AreaChart data={trend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />
             <XAxis dataKey="date" {...axisProps} />
             <YAxis {...axisProps} />
             <Tooltip {...tooltipStyle} />
@@ -173,9 +160,7 @@ export default function StatsPage() {
       {/* 底部两列 */}
       <div className="grid grid-cols-[14fr_10fr] gap-4">
         <div className="glass-card px-6 py-5">
-          <div className="font-semibold text-slate-200 mb-4">
-            各模型用量排行
-          </div>
+          <div className="font-semibold text-slate-200 mb-4">各模型用量排行</div>
           <Table
             rowKey="modelId"
             size="small"
@@ -185,26 +170,12 @@ export default function StatsPage() {
           />
         </div>
         <div className="glass-card px-6 py-5">
-          <div className="font-semibold text-slate-200 mb-4">
-            模型请求数对比
-          </div>
+          <div className="font-semibold text-slate-200 mb-4">模型请求数对比</div>
           <ResponsiveContainer width="100%" height={240}>
-            <BarChart
-              data={modelStats.slice(0, 8)}
-              layout="vertical"
-              margin={{ left: 80 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="rgba(139, 92, 246, 0.1)"
-              />
+            <BarChart data={modelStats.slice(0, 8)} layout="vertical" margin={{ left: 80 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(139, 92, 246, 0.1)" />
               <XAxis type="number" {...axisProps} />
-              <YAxis
-                type="category"
-                dataKey="modelName"
-                width={80}
-                {...axisProps}
-              />
+              <YAxis type="category" dataKey="modelName" width={80} {...axisProps} />
               <Tooltip {...tooltipStyle} />
               <defs>
                 <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">

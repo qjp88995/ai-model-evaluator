@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 
-import { modelsApi } from "../../services/api";
-import { LlmModel } from "../../types";
+import { modelsApi } from "@/services/api";
+import { LlmModel } from "@/types";
 import ModelCard from "./ModelCard";
 import ModelFormModal from "./ModelFormModal";
 
@@ -43,7 +43,7 @@ export default function ModelsPage() {
         message.error("删除失败");
       }
     },
-    [load],
+    [load]
   );
 
   const handleTest = useCallback(async (id: string) => {
@@ -68,9 +68,7 @@ export default function ModelsPage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold gradient-text m-0">模型管理</h2>
         <div className="flex items-center gap-3">
-          <span className="text-slate-400 text-[13px]">
-            共 {models.length} 个模型
-          </span>
+          <span className="text-slate-400 text-[13px]">共 {models.length} 个模型</span>
           <Button size="small" icon={<ReloadOutlined />} onClick={load}>
             刷新
           </Button>
