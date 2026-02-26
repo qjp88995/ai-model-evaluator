@@ -1,9 +1,9 @@
 import { ApiOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 
-import { PROVIDER_COLORS, PROVIDERS } from './providerConfig';
-
 import { LlmModel } from '@/types';
+
+import { PROVIDER_COLORS, PROVIDERS } from './providerConfig';
 
 interface Props {
   model: LlmModel;

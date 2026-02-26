@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import { App, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 
-import { PROVIDER_DEFAULT_URLS, PROVIDERS } from './providerConfig';
-
 import { modelsApi } from '@/services/api';
 import { LlmModel } from '@/types';
+
+import { PROVIDER_DEFAULT_URLS, PROVIDERS } from './providerConfig';
 
 interface Props {
   open: boolean;
