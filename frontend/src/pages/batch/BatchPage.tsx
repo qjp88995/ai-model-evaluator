@@ -3,10 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { App, Button } from "antd";
 
+import EvalResultDrawer from "../../components/EvalResultDrawer";
 import { evalApi, modelsApi, testsetsApi } from "../../services/api";
 import { EvalSession, LlmModel, TestSet } from "../../types";
 import BatchNewModal from "./BatchNewModal";
-import BatchResultDrawer from "./BatchResultDrawer";
 import BatchSessionCard from "./BatchSessionCard";
 
 export default function BatchPage() {
@@ -110,7 +110,7 @@ export default function BatchPage() {
       />
 
       {/* 结果 Drawer */}
-      <BatchResultDrawer
+      <EvalResultDrawer
         session={drawerSession}
         models={models}
         onClose={() => setDrawerSession(null)}

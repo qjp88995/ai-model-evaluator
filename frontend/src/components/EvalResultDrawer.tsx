@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import { Drawer, Tag } from "antd";
 
-import { MarkdownRenderer } from "../../components/markdown";
-import { EvalResult, EvalSession, LlmModel } from "../../types";
+import { EvalResult, EvalSession, LlmModel } from "../types";
+import { MarkdownRenderer } from "./markdown";
 
 interface Props {
   session: EvalSession | null;
@@ -11,7 +11,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function BatchResultDrawer({ session, models, onClose }: Props) {
+export default function EvalResultDrawer({ session, models, onClose }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {

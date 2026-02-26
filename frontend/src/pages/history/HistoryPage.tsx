@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { Button, Modal, Select, Space, Table, Tag } from "antd";
+import { Button, Select, Space, Table, Tag } from "antd";
 import dayjs from "dayjs";
 
-import { MarkdownRenderer } from "../../components/markdown";
+import EvalResultDrawer from "../../components/EvalResultDrawer";
 import { evalApi, modelsApi } from "../../services/api";
-import { EvalResult, EvalSession, LlmModel } from "../../types";
+import { EvalSession, LlmModel } from "../../types";
 
 const statusColor: Record<string, string> = {
   pending: "default",
@@ -119,50 +119,6 @@ export default function HistoryPage() {
     },
   ];
 
-  const resultColumns = [
-    {
-      title: "模型",
-      dataIndex: "modelId",
-      key: "modelId",
-      width: 150,
-      render: (v: string) => models.find((m) => m.id === v)?.name ?? v,
-    },
-    { title: "Prompt", dataIndex: "prompt", key: "prompt", ellipsis: true },
-    {
-      title: "状态",
-      dataIndex: "status",
-      key: "status",
-      width: 80,
-      render: (v: string) => <Tag color={statusColor[v]}>{v}</Tag>,
-    },
-    {
-      title: "分数",
-      dataIndex: "score",
-      key: "score",
-      width: 60,
-      render: (v: number) => (v != null ? v.toFixed(1) : "-"),
-    },
-    {
-      title: "输入Token",
-      dataIndex: "tokensInput",
-      key: "tokensInput",
-      width: 90,
-    },
-    {
-      title: "输出Token",
-      dataIndex: "tokensOutput",
-      key: "tokensOutput",
-      width: 90,
-    },
-    {
-      title: "耗时",
-      dataIndex: "responseTimeMs",
-      key: "responseTimeMs",
-      width: 80,
-      render: (v: number) => (v ? `${v}ms` : "-"),
-    },
-  ];
-
   return (
     <div className="glass-card px-6 py-5">
       <div className="mb-4 flex gap-2">
@@ -188,43 +144,11 @@ export default function HistoryPage() {
         pagination={{ pageSize: 10 }}
       />
 
-      <Modal
-        title="会话详情"
-        open={!!detail}
-        onCancel={() => setDetail(null)}
-        footer={null}
-        width={900}
-      >
-        <Table
-          rowKey="id"
-          size="small"
-          columns={resultColumns}
-          dataSource={detail?.results ?? []}
-          pagination={{ pageSize: 10 }}
-          expandable={{
-            expandedRowRender: (r: EvalResult) => (
-              <div>
-                <div>
-                  <strong>回答：</strong>
-                  <MarkdownRenderer content={r.response ?? ""} />
-                </div>
-                {r.scoreComment && (
-                  <div>
-                    <strong>评语：</strong>
-                    {r.scoreComment}
-                  </div>
-                )}
-                {r.error && (
-                  <div className="text-red-500">
-                    <strong>错误：</strong>
-                    {r.error}
-                  </div>
-                )}
-              </div>
-            ),
-          }}
-        />
-      </Modal>
+      <EvalResultDrawer
+        session={detail}
+        models={models}
+        onClose={() => setDetail(null)}
+      />
     </div>
   );
 }
