@@ -79,6 +79,71 @@ pnpm lint:fix    # 自动修复
   - `Drawer width={n}` → `size="large"`（预设：default 378px / large 736px）
 - `simple-import-sort`：导入分组顺序 react → 三方库 → 相对路径 → CSS
 
+## 前端页面规范
+
+### 卡片网格布局
+
+管理类页面统一使用卡片网格布局（batch、models、testsets 均已采用）：
+
+```tsx
+// 网格容器
+<div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+  {/* 第一张：新建卡片（虚线边框） */}
+  <button
+    onClick={handleNew}
+    className="glass-card px-5 py-4 min-h-40 flex flex-col items-center justify-center gap-3
+               border-2 border-dashed border-purple-300 hover:border-purple-500
+               hover:bg-purple-50/30 cursor-pointer transition-colors
+               text-purple-400 hover:text-purple-600"
+  >
+    <PlusOutlined style={{ fontSize: 28 }} />
+    <span className="text-sm font-medium">新建 xxx</span>
+  </button>
+  {/* 其余：数据卡片，用 glass-card 类 */}
+</div>
+```
+
+页头统一：标题用 `gradient-text`，右侧放刷新按钮。
+
+### 页面文件拆分模式
+
+管理类页面按以下方式拆分文件：
+
+| 文件 | 职责 |
+|------|------|
+| `XxxPage.tsx` | 状态容器，网格布局，组合子组件 |
+| `XxxCard.tsx` | 单张卡片，纯展示 + 操作按钮 |
+| `XxxFormModal.tsx` | 新建/编辑 Modal |
+| `XxxDrawer.tsx` | 详情/子项管理 Drawer（按需） |
+
+### React 规范补充
+
+**Rules of Hooks**：`useCallback` / `useMemo` 必须在所有 early return 之前调用。若组件有 `if (!prop) return null` 守卫，须将 hooks 提前，在 callback 内部做空值判断：
+
+```tsx
+// 正确：hooks 在 early return 之前
+const handleXxx = useCallback((id: string) => {
+  if (!prop) return;   // 在 callback 内部守卫
+  ...
+}, [prop]);
+
+if (!prop) return null;  // early return 在 hooks 之后
+```
+
+**轮询稳定性**：`setInterval` 回调引用父组件 callback 时，用 `useRef` 避免 interval 频繁重建：
+
+```tsx
+const onUpdateRef = useRef(onUpdate);
+useEffect(() => { onUpdateRef.current = onUpdate; });  // 每次渲染同步
+
+useEffect(() => {
+  const timer = setInterval(() => {
+    api.get(id).then((res) => onUpdateRef.current(res.data)).catch(console.error);
+  }, 3000);
+  return () => clearInterval(timer);
+}, [id, status]);  // 不含 onUpdate
+```
+
 ## 开发注意事项
 
 - 修改 `prisma/schema.prisma` 后必须运行 `pnpm prisma:dev` 生成迁移文件
