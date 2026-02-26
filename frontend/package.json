@@ -11,7 +11,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,css,json}": "prettier --write"
+    "src/**/*.{ts,tsx,css,json}": "prettier --write",
+    "src/**/*.{ts,tsx}": "eslint --max-warnings=0"
   },
   "keywords": [],
   "author": "",
