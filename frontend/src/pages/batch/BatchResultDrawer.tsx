@@ -53,6 +53,7 @@ export default function BatchResultDrawer({ session, models, onClose }: Props) {
       onClose={onClose}
       size="large"
       styles={{
+        wrapper: { width: "75%" },
         body: {
           padding: 0,
           display: "flex",
