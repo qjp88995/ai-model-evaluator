@@ -79,7 +79,8 @@ export default function BatchSessionCard({
   }, [session.id, session.status]);
 
   const statusCfg = STATUS_CONFIG[session.status];
-  const total = session._count?.results ?? 0;
+  // getSession 只返回 results[]，listSessions 只返回 _count，两者都兼容
+  const total = session.results?.length ?? session._count?.results ?? 0;
   const completedCount =
     session.results?.filter(
       (r) => r.status === "success" || r.status === "failed",
@@ -141,7 +142,7 @@ export default function BatchSessionCard({
 
       {/* 结果数 */}
       <div className="text-xs text-gray-500">
-        结果数：{session._count?.results ?? "-"}
+        结果数：{session.results?.length ?? session._count?.results ?? "-"}
       </div>
 
       {/* 时间 */}
