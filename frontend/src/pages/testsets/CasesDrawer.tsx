@@ -223,7 +223,7 @@ export default function CasesDrawer({
             <TextArea rows={3} />
           </Form.Item>
           <Form.Item name="scoringCriteria" label="评分标准">
-            <Input placeholder="例: 准确性、完整性、简洁性" />
+            <TextArea rows={3} placeholder="例: 准确性、完整性、简洁性" />
           </Form.Item>
         </Form>
       </Modal>
