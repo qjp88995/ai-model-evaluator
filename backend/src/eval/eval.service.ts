@@ -117,6 +117,8 @@ export class EvalService {
             responseTimeMs: chunk.responseTimeMs,
             error: chunk.error,
           });
+        } else if (chunk.thinking) {
+          send({ thinking: chunk.thinking, done: false });
         } else {
           fullResponse += chunk.content ?? "";
           send({ chunk: chunk.content, done: false });

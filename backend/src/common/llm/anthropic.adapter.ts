@@ -59,22 +59,24 @@ export class AnthropicAdapter implements LlmAdapter {
   ): AsyncGenerator<StreamChunk> {
     const start = Date.now();
     const { system, messages: msgs } = this.splitMessages(messages);
+    const maxTokens = options.maxTokens ?? 2048;
+
+    // 先尝试开启 extended thinking，失败则回退到普通模式
+    const streamIter =
+      (await this.tryCreateThinkingStream(msgs, system, maxTokens)) ??
+      (await this.createNormalStream(msgs, system, maxTokens, options));
 
     try {
-      const stream = await this.client.messages.create({
-        model: this.modelId,
-        max_tokens: options.maxTokens ?? 2048,
-        temperature: options.temperature ?? 0.7,
-        system,
-        messages: msgs,
-        stream: true,
-      });
-
       let tokensInput = 0;
       let tokensOutput = 0;
 
-      for await (const event of stream) {
+      for await (const event of streamIter) {
         if (
+          event.type === "content_block_delta" &&
+          event.delta.type === "thinking_delta"
+        ) {
+          yield { thinking: (event.delta as any).thinking, done: false };
+        } else if (
           event.type === "content_block_delta" &&
           event.delta.type === "text_delta"
         ) {
@@ -95,5 +97,45 @@ export class AnthropicAdapter implements LlmAdapter {
     } catch (err: any) {
       yield { done: true, error: err.message ?? "Unknown error" };
     }
+  }
+
+  private async tryCreateThinkingStream(
+    msgs: Anthropic.MessageParam[],
+    system: string | undefined,
+    maxTokens: number,
+  ) {
+    // extended thinking 要求 budget_tokens < max_tokens，且 temperature 固定为 1
+    const budgetTokens = Math.max(1024, Math.floor(maxTokens * 0.6));
+    const effectiveMaxTokens = Math.max(maxTokens, budgetTokens + 1024);
+
+    try {
+      return await this.client.messages.create({
+        model: this.modelId,
+        max_tokens: effectiveMaxTokens,
+        system,
+        messages: msgs,
+        thinking: { type: "enabled", budget_tokens: budgetTokens },
+        stream: true,
+      });
+    } catch {
+      // 模型不支持 extended thinking，返回 null 以回退
+      return null;
+    }
+  }
+
+  private async createNormalStream(
+    msgs: Anthropic.MessageParam[],
+    system: string | undefined,
+    maxTokens: number,
+    options: ChatOptions,
+  ) {
+    return this.client.messages.create({
+      model: this.modelId,
+      max_tokens: maxTokens,
+      temperature: options.temperature ?? 0.7,
+      system,
+      messages: msgs,
+      stream: true,
+    });
   }
 }

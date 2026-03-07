@@ -1,5 +1,5 @@
 export interface Message {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
@@ -19,6 +19,7 @@ export interface ChatResult {
 
 export interface StreamChunk {
   content?: string;
+  thinking?: string;
   done: boolean;
   tokensInput?: number;
   tokensOutput?: number;
@@ -28,5 +29,8 @@ export interface StreamChunk {
 
 export interface LlmAdapter {
   chat(messages: Message[], options: ChatOptions): Promise<ChatResult>;
-  stream(messages: Message[], options: ChatOptions): AsyncGenerator<StreamChunk>;
+  stream(
+    messages: Message[],
+    options: ChatOptions,
+  ): AsyncGenerator<StreamChunk>;
 }

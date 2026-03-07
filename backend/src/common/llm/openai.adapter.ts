@@ -63,13 +63,18 @@ export class OpenAIAdapter implements LlmAdapter {
       });
 
       for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta?.content;
+        const delta = chunk.choices[0]?.delta;
         if (chunk.usage) {
           tokensInput = chunk.usage.prompt_tokens;
           tokensOutput = chunk.usage.completion_tokens;
         }
-        if (delta) {
-          yield { content: delta, done: false };
+        // DeepSeek-R1 等推理模型会返回 reasoning_content
+        const reasoning = (delta as any)?.reasoning_content;
+        if (reasoning) {
+          yield { thinking: reasoning, done: false };
+        }
+        if (delta?.content) {
+          yield { content: delta.content, done: false };
         }
       }
 

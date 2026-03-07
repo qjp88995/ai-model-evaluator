@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
+  BulbOutlined,
   ClearOutlined,
   CopyOutlined,
   DownloadOutlined,
@@ -33,6 +34,8 @@ interface ModelState {
   id: string;
   name: string;
   content: string;
+  thinking: string;
+  thinkingDone: boolean;
   done: boolean;
   tokensInput?: number;
   tokensOutput?: number;
@@ -45,6 +48,56 @@ function getColSpan(total: number): number {
   if (total === 1) return 24;
   if (total === 3) return 8;
   return 12;
+}
+
+function ThinkingBlock({
+  thinking,
+  thinkingDone,
+  done,
+}: {
+  thinking: string;
+  thinkingDone: boolean;
+  done: boolean;
+}) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  // 思考结束后自动折叠
+  useEffect(() => {
+    if (thinkingDone) setCollapsed(true);
+  }, [thinkingDone]);
+
+  return (
+    <div className="mb-3">
+      <button
+        type="button"
+        onClick={() => setCollapsed(v => !v)}
+        className="flex items-center gap-1.5 text-xs text-amber-400/80 hover:text-amber-300 transition-colors cursor-pointer bg-transparent border-0 p-0 mb-1.5"
+      >
+        <BulbOutlined />
+        <span className="font-medium">
+          思考过程
+          {!thinkingDone && !done && (
+            <span className="ml-1 animate-pulse">...</span>
+          )}
+        </span>
+        {collapsed ? (
+          <DownOutlined style={{ fontSize: 10 }} />
+        ) : (
+          <UpOutlined style={{ fontSize: 10 }} />
+        )}
+      </button>
+      {!collapsed && (
+        <div className="rounded-lg bg-amber-500/5 border border-amber-500/15 px-3 py-2 max-h-60 overflow-y-auto">
+          <pre className="text-xs text-slate-400 whitespace-pre-wrap break-words m-0 font-sans leading-relaxed">
+            {thinking}
+            {!thinkingDone && !done && (
+              <span className="text-amber-400">▊</span>
+            )}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function ComparePage() {
@@ -81,10 +134,12 @@ export default function ComparePage() {
 
     setRunning(true);
     setSessionId(null);
-    const initialStates = selectedIds.map(id => ({
+    const initialStates: ModelState[] = selectedIds.map(id => ({
       id,
       name: models.find(m => m.id === id)?.name ?? id,
       content: '',
+      thinking: '',
+      thinkingDone: false,
       done: false,
     }));
     setModelStates(initialStates);
@@ -121,13 +176,25 @@ export default function ComparePage() {
                 return {
                   ...s,
                   done: true,
+                  thinkingDone: true,
                   tokensInput: data.tokensInput,
                   tokensOutput: data.tokensOutput,
                   responseTimeMs: data.responseTimeMs,
                   error: data.error,
                 };
               }
-              return { ...s, content: s.content + (data.chunk ?? '') };
+              if (data.thinking) {
+                return {
+                  ...s,
+                  thinking: s.thinking + data.thinking,
+                };
+              }
+              return {
+                ...s,
+                content: s.content + (data.chunk ?? ''),
+                // 收到正式内容意味着思考阶段结束
+                thinkingDone: s.thinking ? true : s.thinkingDone,
+              };
             })
           );
 
@@ -145,7 +212,7 @@ export default function ComparePage() {
           setModelStates(prev =>
             prev.map(s =>
               s.id === modelId && !s.done
-                ? { ...s, done: true, error: '连接中断' }
+                ? { ...s, done: true, thinkingDone: true, error: '连接中断' }
                 : s
             )
           );
@@ -161,15 +228,15 @@ export default function ComparePage() {
     }
   };
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     eventSourcesRef.current.forEach(es => es.close());
     eventSourcesRef.current = [];
     setModelStates([]);
     setSessionId(null);
     setRunning(false);
-  };
+  }, []);
 
-  const handleCopy = (content: string) => {
+  const handleCopy = useCallback((content: string) => {
     navigator.clipboard
       .writeText(content)
       .then(() => {
@@ -178,7 +245,7 @@ export default function ComparePage() {
       .catch(() => {
         void message.error('复制失败，请手动复制');
       });
-  };
+  }, []);
 
   const handleExport = async () => {
     if (!sessionId) return;
@@ -341,6 +408,13 @@ export default function ComparePage() {
                       className="overflow-y-auto flex-1"
                       style={{ maxHeight: '60vh' }}
                     >
+                      {state.thinking && (
+                        <ThinkingBlock
+                          thinking={state.thinking}
+                          thinkingDone={state.thinkingDone}
+                          done={state.done}
+                        />
+                      )}
                       {state.error ? (
                         <Text type="danger">{state.error}</Text>
                       ) : (
